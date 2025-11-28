@@ -1,0 +1,464 @@
+[
+  {
+    "id": "e1",
+    "source": "cl_1076",
+    "target": "cl_1425",
+    "weight": 0.1374,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e2",
+    "source": "cl_1076",
+    "target": "cl_1506",
+    "weight": 0.004,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e3",
+    "source": "cl_1076",
+    "target": "cl_1737",
+    "weight": 0.0236,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e4",
+    "source": "cl_1076",
+    "target": "cl_1889",
+    "weight": 0.1694,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e5",
+    "source": "cl_1076",
+    "target": "cl_1982",
+    "weight": 0.1336,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e6",
+    "source": "cl_1076",
+    "target": "cl_1999",
+    "weight": 0.1916,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e7",
+    "source": "cl_1076",
+    "target": "cl_2122",
+    "weight": 0.0188,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e8",
+    "source": "cl_1076",
+    "target": "cl_2132",
+    "weight": 0.1239,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e9",
+    "source": "cl_1076",
+    "target": "cl_77",
+    "weight": 0.0592,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e10",
+    "source": "cl_1076",
+    "target": "cl_796",
+    "weight": 0.0896,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e11",
+    "source": "cl_1076",
+    "target": "cl_998",
+    "weight": 0.0242,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e12",
+    "source": "cl_1425",
+    "target": "cl_1506",
+    "weight": 0.0371,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e13",
+    "source": "cl_1425",
+    "target": "cl_1737",
+    "weight": 0.0853,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e14",
+    "source": "cl_1425",
+    "target": "cl_1889",
+    "weight": 0.1616,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e15",
+    "source": "cl_1425",
+    "target": "cl_1982",
+    "weight": 0.173,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e16",
+    "source": "cl_1425",
+    "target": "cl_1999",
+    "weight": 0.3197,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e17",
+    "source": "cl_1425",
+    "target": "cl_2122",
+    "weight": 0.1328,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e18",
+    "source": "cl_1425",
+    "target": "cl_2132",
+    "weight": 0.1401,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e19",
+    "source": "cl_1425",
+    "target": "cl_77",
+    "weight": 0.3307,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e20",
+    "source": "cl_1425",
+    "target": "cl_796",
+    "weight": 0.2213,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e21",
+    "source": "cl_1425",
+    "target": "cl_998",
+    "weight": 0.497,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e22",
+    "source": "cl_1506",
+    "target": "cl_1737",
+    "weight": 0.0126,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e23",
+    "source": "cl_1506",
+    "target": "cl_1889",
+    "weight": 0.0014,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e24",
+    "source": "cl_1506",
+    "target": "cl_1982",
+    "weight": 0.0259,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e25",
+    "source": "cl_1506",
+    "target": "cl_1999",
+    "weight": 0.0158,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e26",
+    "source": "cl_1506",
+    "target": "cl_2122",
+    "weight": 0.0311,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e27",
+    "source": "cl_1506",
+    "target": "cl_2132",
+    "weight": 0.0038,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e28",
+    "source": "cl_1506",
+    "target": "cl_77",
+    "weight": 0.0262,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e29",
+    "source": "cl_1506",
+    "target": "cl_796",
+    "weight": 0.0052,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e30",
+    "source": "cl_1506",
+    "target": "cl_998",
+    "weight": 0.0907,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e31",
+    "source": "cl_1737",
+    "target": "cl_1889",
+    "weight": 0.037,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e32",
+    "source": "cl_1737",
+    "target": "cl_1982",
+    "weight": 0.0642,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e33",
+    "source": "cl_1737",
+    "target": "cl_1999",
+    "weight": 0.0335,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e34",
+    "source": "cl_1737",
+    "target": "cl_2122",
+    "weight": 0.0724,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e35",
+    "source": "cl_1737",
+    "target": "cl_2132",
+    "weight": 0.0632,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e36",
+    "source": "cl_1737",
+    "target": "cl_77",
+    "weight": 0.0297,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e37",
+    "source": "cl_1737",
+    "target": "cl_796",
+    "weight": 0.0599,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e38",
+    "source": "cl_1737",
+    "target": "cl_998",
+    "weight": 0.0292,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e39",
+    "source": "cl_1889",
+    "target": "cl_1982",
+    "weight": 0.0988,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e40",
+    "source": "cl_1889",
+    "target": "cl_1999",
+    "weight": 0.1308,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e41",
+    "source": "cl_1889",
+    "target": "cl_2122",
+    "weight": 0.0254,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e42",
+    "source": "cl_1889",
+    "target": "cl_2132",
+    "weight": 0.0546,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e43",
+    "source": "cl_1889",
+    "target": "cl_77",
+    "weight": 0.0154,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e44",
+    "source": "cl_1889",
+    "target": "cl_796",
+    "weight": 0.0211,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e45",
+    "source": "cl_1889",
+    "target": "cl_998",
+    "weight": 0.0229,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e46",
+    "source": "cl_1982",
+    "target": "cl_1999",
+    "weight": 0.3348,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e47",
+    "source": "cl_1982",
+    "target": "cl_2122",
+    "weight": 0.0419,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e48",
+    "source": "cl_1982",
+    "target": "cl_2132",
+    "weight": 0.0563,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e49",
+    "source": "cl_1982",
+    "target": "cl_77",
+    "weight": 1.0172,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e50",
+    "source": "cl_1982",
+    "target": "cl_796",
+    "weight": 0.0553,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e51",
+    "source": "cl_1982",
+    "target": "cl_998",
+    "weight": 0.2686,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e52",
+    "source": "cl_1999",
+    "target": "cl_2122",
+    "weight": 0.0219,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e53",
+    "source": "cl_1999",
+    "target": "cl_2132",
+    "weight": 0.046,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e54",
+    "source": "cl_1999",
+    "target": "cl_77",
+    "weight": 0.087,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e55",
+    "source": "cl_1999",
+    "target": "cl_796",
+    "weight": 0.0337,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e56",
+    "source": "cl_1999",
+    "target": "cl_998",
+    "weight": 0.0471,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e57",
+    "source": "cl_2122",
+    "target": "cl_2132",
+    "weight": 0.0072,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e58",
+    "source": "cl_2122",
+    "target": "cl_77",
+    "weight": 0.0749,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e59",
+    "source": "cl_2122",
+    "target": "cl_796",
+    "weight": 0.0721,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e60",
+    "source": "cl_2122",
+    "target": "cl_998",
+    "weight": 0.1032,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e61",
+    "source": "cl_2132",
+    "target": "cl_77",
+    "weight": 0.0929,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e62",
+    "source": "cl_2132",
+    "target": "cl_796",
+    "weight": 0.0083,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e63",
+    "source": "cl_2132",
+    "target": "cl_998",
+    "weight": 0.0807,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e64",
+    "source": "cl_77",
+    "target": "cl_796",
+    "weight": 0.0562,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e65",
+    "source": "cl_77",
+    "target": "cl_998",
+    "weight": 0.7375,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e66",
+    "source": "cl_796",
+    "target": "cl_998",
+    "weight": 0.0376,
+    "stringsAsFactors": false
+  }
+]

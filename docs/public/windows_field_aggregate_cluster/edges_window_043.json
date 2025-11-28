@@ -1,0 +1,548 @@
+[
+  {
+    "id": "e1",
+    "source": "cl_1076",
+    "target": "cl_1425",
+    "weight": 0.217,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e2",
+    "source": "cl_1076",
+    "target": "cl_1506",
+    "weight": 0.0031,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e3",
+    "source": "cl_1076",
+    "target": "cl_1737",
+    "weight": 0.0288,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e4",
+    "source": "cl_1076",
+    "target": "cl_1889",
+    "weight": 0.2335,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e5",
+    "source": "cl_1076",
+    "target": "cl_1977",
+    "weight": 0.1714,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e6",
+    "source": "cl_1076",
+    "target": "cl_1982",
+    "weight": 0.263,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e7",
+    "source": "cl_1076",
+    "target": "cl_1999",
+    "weight": 0.2118,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e8",
+    "source": "cl_1076",
+    "target": "cl_2122",
+    "weight": 0.0352,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e9",
+    "source": "cl_1076",
+    "target": "cl_2132",
+    "weight": 0.1435,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e10",
+    "source": "cl_1076",
+    "target": "cl_77",
+    "weight": 0.1056,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e11",
+    "source": "cl_1076",
+    "target": "cl_796",
+    "weight": 0.1018,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e12",
+    "source": "cl_1076",
+    "target": "cl_998",
+    "weight": 0.0215,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e13",
+    "source": "cl_1425",
+    "target": "cl_1506",
+    "weight": 0.0434,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e14",
+    "source": "cl_1425",
+    "target": "cl_1737",
+    "weight": 0.087,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e15",
+    "source": "cl_1425",
+    "target": "cl_1889",
+    "weight": 0.1658,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e16",
+    "source": "cl_1425",
+    "target": "cl_1977",
+    "weight": 0.104,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e17",
+    "source": "cl_1425",
+    "target": "cl_1982",
+    "weight": 0.3148,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e18",
+    "source": "cl_1425",
+    "target": "cl_1999",
+    "weight": 0.3064,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e19",
+    "source": "cl_1425",
+    "target": "cl_2122",
+    "weight": 0.124,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e20",
+    "source": "cl_1425",
+    "target": "cl_2132",
+    "weight": 0.1304,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e21",
+    "source": "cl_1425",
+    "target": "cl_77",
+    "weight": 0.4482,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e22",
+    "source": "cl_1425",
+    "target": "cl_796",
+    "weight": 0.2184,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e23",
+    "source": "cl_1425",
+    "target": "cl_998",
+    "weight": 0.3053,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e24",
+    "source": "cl_1506",
+    "target": "cl_1737",
+    "weight": 0.01,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e25",
+    "source": "cl_1506",
+    "target": "cl_1889",
+    "weight": 0.0017,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e26",
+    "source": "cl_1506",
+    "target": "cl_1977",
+    "weight": 0.0081,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e27",
+    "source": "cl_1506",
+    "target": "cl_1982",
+    "weight": 0.0179,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e28",
+    "source": "cl_1506",
+    "target": "cl_1999",
+    "weight": 0.0217,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e29",
+    "source": "cl_1506",
+    "target": "cl_2122",
+    "weight": 0.0293,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e30",
+    "source": "cl_1506",
+    "target": "cl_2132",
+    "weight": 0.0169,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e31",
+    "source": "cl_1506",
+    "target": "cl_77",
+    "weight": 0.0559,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e32",
+    "source": "cl_1506",
+    "target": "cl_796",
+    "weight": 0.0059,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e33",
+    "source": "cl_1506",
+    "target": "cl_998",
+    "weight": 0.054,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e34",
+    "source": "cl_1737",
+    "target": "cl_1889",
+    "weight": 0.0251,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e35",
+    "source": "cl_1737",
+    "target": "cl_1977",
+    "weight": 0.0058,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e36",
+    "source": "cl_1737",
+    "target": "cl_1982",
+    "weight": 0.0518,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e37",
+    "source": "cl_1737",
+    "target": "cl_1999",
+    "weight": 0.0228,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e38",
+    "source": "cl_1737",
+    "target": "cl_2122",
+    "weight": 0.0727,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e39",
+    "source": "cl_1737",
+    "target": "cl_2132",
+    "weight": 0.0479,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e40",
+    "source": "cl_1737",
+    "target": "cl_77",
+    "weight": 0.0317,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e41",
+    "source": "cl_1737",
+    "target": "cl_796",
+    "weight": 0.0481,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e42",
+    "source": "cl_1737",
+    "target": "cl_998",
+    "weight": 0.0164,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e43",
+    "source": "cl_1889",
+    "target": "cl_1977",
+    "weight": 0.0398,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e44",
+    "source": "cl_1889",
+    "target": "cl_1982",
+    "weight": 0.0754,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e45",
+    "source": "cl_1889",
+    "target": "cl_1999",
+    "weight": 0.1453,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e46",
+    "source": "cl_1889",
+    "target": "cl_2122",
+    "weight": 0.0265,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e47",
+    "source": "cl_1889",
+    "target": "cl_2132",
+    "weight": 0.0438,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e48",
+    "source": "cl_1889",
+    "target": "cl_77",
+    "weight": 0.0252,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e49",
+    "source": "cl_1889",
+    "target": "cl_796",
+    "weight": 0.012,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e50",
+    "source": "cl_1889",
+    "target": "cl_998",
+    "weight": 0.0043,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e51",
+    "source": "cl_1977",
+    "target": "cl_1982",
+    "weight": 0.1073,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e52",
+    "source": "cl_1977",
+    "target": "cl_1999",
+    "weight": 0.1398,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e53",
+    "source": "cl_1977",
+    "target": "cl_2122",
+    "weight": 0.0435,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e54",
+    "source": "cl_1977",
+    "target": "cl_2132",
+    "weight": 0.0099,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e55",
+    "source": "cl_1977",
+    "target": "cl_77",
+    "weight": 0.0164,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e56",
+    "source": "cl_1977",
+    "target": "cl_796",
+    "weight": 0.0692,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e57",
+    "source": "cl_1977",
+    "target": "cl_998",
+    "weight": 0.0588,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e58",
+    "source": "cl_1982",
+    "target": "cl_1999",
+    "weight": 0.3736,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e59",
+    "source": "cl_1982",
+    "target": "cl_2122",
+    "weight": 0.0453,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e60",
+    "source": "cl_1982",
+    "target": "cl_2132",
+    "weight": 0.0428,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e61",
+    "source": "cl_1982",
+    "target": "cl_77",
+    "weight": 0.6036,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e62",
+    "source": "cl_1982",
+    "target": "cl_796",
+    "weight": 0.0794,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e63",
+    "source": "cl_1982",
+    "target": "cl_998",
+    "weight": 0.1578,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e64",
+    "source": "cl_1999",
+    "target": "cl_2122",
+    "weight": 0.0235,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e65",
+    "source": "cl_1999",
+    "target": "cl_2132",
+    "weight": 0.0455,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e66",
+    "source": "cl_1999",
+    "target": "cl_77",
+    "weight": 0.1651,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e67",
+    "source": "cl_1999",
+    "target": "cl_796",
+    "weight": 0.0322,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e68",
+    "source": "cl_1999",
+    "target": "cl_998",
+    "weight": 0.0464,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e69",
+    "source": "cl_2122",
+    "target": "cl_2132",
+    "weight": 0.0028,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e70",
+    "source": "cl_2122",
+    "target": "cl_77",
+    "weight": 0.0612,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e71",
+    "source": "cl_2122",
+    "target": "cl_796",
+    "weight": 0.0815,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e72",
+    "source": "cl_2122",
+    "target": "cl_998",
+    "weight": 0.062,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e73",
+    "source": "cl_2132",
+    "target": "cl_77",
+    "weight": 0.073,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e74",
+    "source": "cl_2132",
+    "target": "cl_796",
+    "weight": 0.0054,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e75",
+    "source": "cl_2132",
+    "target": "cl_998",
+    "weight": 0.0436,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e76",
+    "source": "cl_77",
+    "target": "cl_796",
+    "weight": 0.0535,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e77",
+    "source": "cl_77",
+    "target": "cl_998",
+    "weight": 0.718,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e78",
+    "source": "cl_796",
+    "target": "cl_998",
+    "weight": 0.0291,
+    "stringsAsFactors": false
+  }
+]

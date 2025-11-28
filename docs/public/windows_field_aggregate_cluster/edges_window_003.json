@@ -1,0 +1,65 @@
+[
+  {
+    "id": "e1",
+    "source": "cl_1",
+    "target": "cl_15",
+    "weight": 0.0009,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e2",
+    "source": "cl_1",
+    "target": "cl_21",
+    "weight": 0.0009,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e3",
+    "source": "cl_1",
+    "target": "cl_3",
+    "weight": 0.0007,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e4",
+    "source": "cl_1",
+    "target": "cl_4",
+    "weight": 0.0013,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e5",
+    "source": "cl_1",
+    "target": "cl_7",
+    "weight": 0.0032,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e6",
+    "source": "cl_15",
+    "target": "cl_28",
+    "weight": 0.002,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e7",
+    "source": "cl_15",
+    "target": "cl_4",
+    "weight": 0.0004,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e8",
+    "source": "cl_15",
+    "target": "cl_7",
+    "weight": 0.0009,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e9",
+    "source": "cl_28",
+    "target": "cl_7",
+    "weight": 0.0012,
+    "stringsAsFactors": false
+  }
+]
