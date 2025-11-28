@@ -1,0 +1,114 @@
+[
+  {
+    "id": "e1",
+    "source": "Agricultural and Biological Sciences",
+    "target": "Biochemistry, Genetics and Molecular Biology",
+    "weight": 0.0009,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e2",
+    "source": "Agricultural and Biological Sciences",
+    "target": "Social Sciences",
+    "weight": 0.0025,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e3",
+    "source": "Arts and Humanities",
+    "target": "Decision Sciences",
+    "weight": 0.0027,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e4",
+    "source": "Arts and Humanities",
+    "target": "Economics, Econometrics and Finance",
+    "weight": 0.0003,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e5",
+    "source": "Arts and Humanities",
+    "target": "Engineering",
+    "weight": 0.0001,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e6",
+    "source": "Biochemistry, Genetics and Molecular Biology",
+    "target": "Decision Sciences",
+    "weight": 0.0003,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e7",
+    "source": "Biochemistry, Genetics and Molecular Biology",
+    "target": "Social Sciences",
+    "weight": 0.0223,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e8",
+    "source": "Business, Management and Accounting",
+    "target": "Decision Sciences",
+    "weight": 0.0021,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e9",
+    "source": "Business, Management and Accounting",
+    "target": "Economics, Econometrics and Finance",
+    "weight": 0.0043,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e10",
+    "source": "Decision Sciences",
+    "target": "Economics, Econometrics and Finance",
+    "weight": 0.0203,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e11",
+    "source": "Decision Sciences",
+    "target": "Engineering",
+    "weight": 0.0007,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e12",
+    "source": "Decision Sciences",
+    "target": "Social Sciences",
+    "weight": 0.0144,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e13",
+    "source": "Economics, Econometrics and Finance",
+    "target": "Engineering",
+    "weight": 0.0023,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e14",
+    "source": "Economics, Econometrics and Finance",
+    "target": "Social Sciences",
+    "weight": 0.005,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e15",
+    "source": "Engineering",
+    "target": "Social Sciences",
+    "weight": 0.0008,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e16",
+    "source": "Psychology",
+    "target": "Social Sciences",
+    "weight": 0.0025,
+    "stringsAsFactors": false
+  }
+]

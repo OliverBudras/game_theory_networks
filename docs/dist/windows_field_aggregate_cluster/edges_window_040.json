@@ -1,0 +1,247 @@
+[
+  {
+    "id": "e1",
+    "source": "cl_1212",
+    "target": "cl_1399",
+    "weight": 0.0018,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e2",
+    "source": "cl_1212",
+    "target": "cl_1476",
+    "weight": 0.0206,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e3",
+    "source": "cl_1212",
+    "target": "cl_1545",
+    "weight": 0.0141,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e4",
+    "source": "cl_1212",
+    "target": "cl_1609",
+    "weight": 0.0083,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e5",
+    "source": "cl_1212",
+    "target": "cl_224",
+    "weight": 0.0012,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e6",
+    "source": "cl_1212",
+    "target": "cl_278",
+    "weight": 0.0104,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e7",
+    "source": "cl_1212",
+    "target": "cl_285",
+    "weight": 0.0041,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e8",
+    "source": "cl_1212",
+    "target": "cl_927",
+    "weight": 0.0038,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e9",
+    "source": "cl_1399",
+    "target": "cl_1476",
+    "weight": 0.0216,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e10",
+    "source": "cl_1399",
+    "target": "cl_1545",
+    "weight": 0.0013,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e11",
+    "source": "cl_1399",
+    "target": "cl_1609",
+    "weight": 0.0003,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e12",
+    "source": "cl_1399",
+    "target": "cl_278",
+    "weight": 0.0012,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e13",
+    "source": "cl_1399",
+    "target": "cl_285",
+    "weight": 0.0004,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e14",
+    "source": "cl_1399",
+    "target": "cl_927",
+    "weight": 0.0047,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e15",
+    "source": "cl_1476",
+    "target": "cl_1545",
+    "weight": 0.0122,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e16",
+    "source": "cl_1476",
+    "target": "cl_1609",
+    "weight": 0.014,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e17",
+    "source": "cl_1476",
+    "target": "cl_224",
+    "weight": 0.0013,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e18",
+    "source": "cl_1476",
+    "target": "cl_278",
+    "weight": 0.0145,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e19",
+    "source": "cl_1476",
+    "target": "cl_285",
+    "weight": 0.0014,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e20",
+    "source": "cl_1476",
+    "target": "cl_927",
+    "weight": 0.0038,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e21",
+    "source": "cl_1545",
+    "target": "cl_1609",
+    "weight": 0.0179,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e22",
+    "source": "cl_1545",
+    "target": "cl_224",
+    "weight": 0.1283,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e23",
+    "source": "cl_1545",
+    "target": "cl_278",
+    "weight": 0.228,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e24",
+    "source": "cl_1545",
+    "target": "cl_285",
+    "weight": 0.0034,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e25",
+    "source": "cl_1545",
+    "target": "cl_927",
+    "weight": 0.0114,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e26",
+    "source": "cl_1609",
+    "target": "cl_224",
+    "weight": 0.0063,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e27",
+    "source": "cl_1609",
+    "target": "cl_278",
+    "weight": 0.0345,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e28",
+    "source": "cl_1609",
+    "target": "cl_285",
+    "weight": 0.0017,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e29",
+    "source": "cl_1609",
+    "target": "cl_927",
+    "weight": 0.0004,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e30",
+    "source": "cl_224",
+    "target": "cl_278",
+    "weight": 0.0061,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e31",
+    "source": "cl_224",
+    "target": "cl_285",
+    "weight": 0.0158,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e32",
+    "source": "cl_224",
+    "target": "cl_927",
+    "weight": 0.0005,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e33",
+    "source": "cl_278",
+    "target": "cl_285",
+    "weight": 0.0016,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e34",
+    "source": "cl_278",
+    "target": "cl_927",
+    "weight": 0.0007,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e35",
+    "source": "cl_285",
+    "target": "cl_927",
+    "weight": 0.006,
+    "stringsAsFactors": false
+  }
+]

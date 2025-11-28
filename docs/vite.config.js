@@ -1,12 +1,17 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite'
+import path from 'path'
 
 export default defineConfig({
-  root: ".",             // Projekt-Root = rolling_network/
-  publicDir: "public",   // JSON-Files aus public/windows werden geladen
+  root: '.',      // 'docs' is already root
+  base: './',     // relative paths for GitHub Pages
   build: {
-    outDir: "dist"
+    outDir: 'dist',   // output folder
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        cluster: path.resolve(__dirname, 'cluster/index.html'),
+        field: path.resolve(__dirname, 'field/index.html'),
+      },
+    },
   },
-  server: {
-    open: "/index_rolling_agg.html"  // startet direkt diese HTML-Datei
-  }
-});
+})

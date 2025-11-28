@@ -1,0 +1,114 @@
+[
+  {
+    "id": "e1",
+    "source": "cl_107",
+    "target": "cl_173",
+    "weight": 0.0006,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e2",
+    "source": "cl_107",
+    "target": "cl_37",
+    "weight": 0.0023,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e3",
+    "source": "cl_138",
+    "target": "cl_168",
+    "weight": 0.0035,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e4",
+    "source": "cl_138",
+    "target": "cl_37",
+    "weight": 0.0003,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e5",
+    "source": "cl_138",
+    "target": "cl_4",
+    "weight": 0.0075,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e6",
+    "source": "cl_154",
+    "target": "cl_160",
+    "weight": 0.0007,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e7",
+    "source": "cl_154",
+    "target": "cl_173",
+    "weight": 0.0002,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e8",
+    "source": "cl_154",
+    "target": "cl_37",
+    "weight": 0.0029,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e9",
+    "source": "cl_154",
+    "target": "cl_4",
+    "weight": 0.0005,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e10",
+    "source": "cl_157",
+    "target": "cl_37",
+    "weight": 0.001,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e11",
+    "source": "cl_160",
+    "target": "cl_37",
+    "weight": 0.001,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e12",
+    "source": "cl_160",
+    "target": "cl_4",
+    "weight": 0.0005,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e13",
+    "source": "cl_168",
+    "target": "cl_173",
+    "weight": 0.0006,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e14",
+    "source": "cl_173",
+    "target": "cl_37",
+    "weight": 0.0026,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e15",
+    "source": "cl_173",
+    "target": "cl_4",
+    "weight": 0.0005,
+    "stringsAsFactors": false
+  },
+  {
+    "id": "e16",
+    "source": "cl_37",
+    "target": "cl_4",
+    "weight": 0.0207,
+    "stringsAsFactors": false
+  }
+]
