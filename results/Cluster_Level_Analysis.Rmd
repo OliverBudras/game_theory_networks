@@ -1,0 +1,792 @@
+---
+title: "Cluster-Level Analysis"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+
+date: "2025-11-27"
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = F, message = F,
+                      fig.width = 10, fig.height = 8, dpi = 300, out.width = "100%")
+
+library(tidyverse)
+library(openalexR)
+library(tidyverse)
+library(here)
+library(bibliometrix)
+library(bibliometrixData)
+library(ggwordcloud)
+library(kableExtra)
+library(ggalluvial)
+library(knitr)
+library(kableExtra)
+library(networkflow)
+library(tidygraph)
+```
+
+
+```{r data load and prep, cache=TRUE}
+
+
+rds_files <- paste0("Evolution Fields Cluster/",list.files("Evolution Fields Cluster"))
+
+rds_files_field_field <- paste0("Field_Field_Data_Cluster/", list.files("Field_Field_Data_Cluster"))
+
+temporal_networks_with_names <- readRDS("Temporal Networks/temporal_networks_with_names.RDS")
+
+
+alluv <- networks_to_alluv(temporal_networks_with_names, intertemporal_cluster_column = "dynamic_cluster_leiden",
+                           node_id = "oa_id") |> 
+  distinct(dynamic_cluster_leiden, window, .keep_all = T)
+
+alluv_filt <- alluv |> 
+  filter(length_cluster > 2 & share_cluster_max > 4)  %>%
+  mutate(cluster_label_short = cluster_label %>%
+           str_split(",") %>%                  # split by comma
+           map_chr(~ str_trim(paste(head(.x, 2), collapse = ", ")))) |> 
+  filter(lengths(gregexpr("\\W+", cluster_label)) > 5)
+
+
+clusters_of_interest <- alluv_filt |> 
+  filter(cluster_label != "no_name") |> 
+  distinct(dynamic_cluster_leiden) 
+
+
+# Read and combine
+all_metrics <- rds_files %>%
+  map_dfr(function(f) {
+    
+    
+    df <- readRDS(f)
+    
+    # Extract window from filename
+    # Assumes filenames like "1970-1974_metrics.RDS"
+    window <- str_extract(basename(f), "\\d{4}-\\d{4}")
+    
+    df %>% mutate(window = window)
+  }) |> 
+  drop_na() |> 
+  mutate(window = factor(window, levels = unique(window))) |> 
+  group_by(window) |> 
+  mutate(totalnumbernodes = sum(numbernodes),
+         totalnumberedges = sum(totaledges)) |> 
+  ungroup() |> 
+  mutate(relative_size_nodes = numbernodes/totalnumbernodes,
+         relative_size_edges = totaledges/totalnumberedges,
+         relative_size_within_edges = withinedges/totalnumberedges,
+         relative_size_between_edges = between_edges/totalnumberedges,
+         size_share_window = numbernodes/totalnumbernodes) |> 
+  filter(id %in% clusters_of_interest$dynamic_cluster_leiden) |> 
+  mutate(cluster_label_short = label %>%
+           str_split(",") %>%                  # split by comma
+           map_chr(~ str_trim(paste(head(.x, 2), collapse = ", ")))) |> 
+    filter(label_full != "no_name") 
+
+ 
+
+all_metrics_field_field <- rds_files_field_field %>%
+  map_dfr(function(f) {
+    df <- readRDS(f)
+    
+    # Extract window from filename
+    # Assumes filenames like "1970-1974_metrics.RDS"
+    window <- str_extract(basename(f), "\\d{4}-\\d{4}")
+    
+    df %>% mutate(window = window)  |> 
+      filter(dynamic_cluster_leiden_min != dynamic_cluster_leiden_max) |> 
+      mutate(cluster_label_min = cluster_label_min %>%
+           str_split(",") %>%                  # split by comma
+           map_chr(~ str_trim(paste(head(.x, 2), collapse = ", "))))  |> 
+      mutate(cluster_label_max = cluster_label_max %>%
+           str_split(",") %>%                  # split by comma
+           map_chr(~ str_trim(paste(head(.x, 2), collapse = ", ")))) |> 
+      mutate(pair = paste(cluster_label_min, cluster_label_max, sep = " – "))
+  }) |> 
+  group_by(window) |> 
+  mutate(N_edges_rel = N_edges/sum(N_edges)) |> 
+  separate(window, into = c("start", "end"), remove=F, sep="-") |> 
+  mutate_at(vars(start, end), as.numeric) |> 
+  filter(start >= 1980) |> 
+  filter(dynamic_cluster_leiden_min %in% clusters_of_interest$dynamic_cluster_leiden) |> 
+  filter(cluster_label_max != "no_name" & cluster_label_min != "no_name") 
+
+
+
+
+df_long <- all_metrics %>%
+  tidyr::pivot_longer(cols = c(internalratio, externalratio,degree,
+                               betweeness, closeness, between_edges, withinedges,
+                               numbernodes, totaledges, relative_size_nodes,
+                               relative_size_edges,relative_size_within_edges,
+                               relative_size_between_edges, citations),
+                      names_to = "type", values_to = "value") |> 
+  mutate(cluster_label_short = label %>%
+           str_split(",") %>%                  # split by comma
+           map_chr(~ str_trim(paste(head(.x, 2), collapse = ", "))))
+
+
+
+
+
+extract_nodes <- function(index){
+  
+  
+  data_tmp <- temporal_networks_with_names[[index]] |> 
+    activate("nodes") |> 
+    as_tibble()
+  
+  
+  return(data_tmp)
+  
+}
+
+index_vec <- seq(1, length(temporal_networks_with_names))
+
+nodes <- map_dfr(index_vec, extract_nodes) |> 
+  distinct(oa_id, .keep_all = T) |> 
+  mutate(cluster_label_short = cluster_label %>%
+         str_split(",") %>%                  # split by comma
+         map_chr(~ str_trim(paste(head(.x, 3), collapse = ", "))))
+
+unfill_vec <- function(x) {
+  same <- x == dplyr::lag(x)
+  ifelse(!is.na(same) & same, "", x)
+}
+
+
+
+```
+
+
+```{r plotting funcs, cache=TRUE}
+
+plot_type <- function(data){
+  
+  data <- df_long
+  
+  data_plot <- data |> 
+    group_by(window, type) |> 
+    summarise(value = mean(value))
+  
+  ggplot(data_plot, aes(x = window, y = value)) +
+    geom_jitter(width = 0.2, height = 0, alpha = 0.7) +
+    theme_minimal() +
+    facet_wrap(~type, scales="free") +
+    theme(axis.text = element_blank()) +
+    labs(y = "Metric", x = "Window")
+  
+  
+}
+
+
+
+
+plot_type_field <- function(data,metric){
+  
+  data_plot <- data |> 
+    filter(type %in% metric)
+  
+  ggplot(data_plot, aes(x = window, y = value,color=type)) +
+    geom_jitter(width = 0.2, height = 0, alpha = 0.7) +
+    theme_minimal() +
+    facet_wrap(~stringr::str_wrap(cluster_label_short, width = 30), ncol = 3) +
+    theme(axis.text = element_blank(),
+          legend.position = "none",
+          strip.text.x = element_text(size = 9, margin = margin(t = 5, b = 5)),
+          strip.text.y = element_text(size = 9, margin = margin(l = 5, r = 5)),
+          plot.margin = grid::unit(c(1,1,1,1), "cm")) +
+    labs(y = toupper(metric), x = "Window")
+  
+  
+  
+}
+
+
+plot_type_field_tile <- function(data,metric){
+  
+  data_plot <- data |> 
+    filter(type %in% metric)
+  
+  
+  ggplot(data_plot, aes(x = window, y = cluster_label_short, fill = value)) +
+    geom_tile() +
+    scale_fill_viridis_c(option = "magma") +
+    theme_minimal() +
+    labs(x = "Window", y = "Cluster", fill = "Value") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  
+  
+}
+
+
+```
+
+
+# 1. Aggregate Metrics
+The Metrics used here are formally defined on a per-field basis below. The aggregate metrics are computed similarly, but over all fields instead of per field.
+
+## 1.1 Aggregate Evolution of Metrics
+
+```{r metrics_agg, cache=TRUE}
+plot_type(df_long)
+```
+
+\newpage
+
+## 1.2 Number of Nodes and Edges over Time
+
+```{r n edges nodes}
+
+summ <- all_metrics |> 
+  group_by(window) |> 
+  summarise(totalnumbernodes = unique(totalnumbernodes), totalnumberedges = unique(totalnumberedges))
+
+
+kable(summ, "latex", booktabs = TRUE, linesep = "", col.names = c("Window", "Number of Nodes", "Number of Edges")) |> 
+  kable_styling(position = "center", latex_options = "hold_position")
+
+
+```
+
+\newpage
+
+## 1.3 Cluster Descriptives
+
+```{r cluster_descritpives}
+
+window_start <- alluv_filt |> 
+  group_by(dynamic_cluster_leiden) |> 
+  slice_min(window, n=1) |> 
+  select(dynamic_cluster_leiden, window_start=window)
+
+window_end <- alluv_filt |> 
+  group_by(dynamic_cluster_leiden) |> 
+  slice_max(window, n=1) |> 
+  select(dynamic_cluster_leiden, window_end=window)
+
+cluster_summ <- alluv_filt |> 
+  mutate(cluster_label_5 = cluster_label %>%
+           str_split(",") %>%                  # split by comma
+           map_chr(~ str_trim(paste(head(.x, 3), collapse = ", ")))) |> 
+  filter(cluster_label != "no_name") |> 
+  distinct(dynamic_cluster_leiden, cluster_label_5, .keep_all = T) |> 
+  select(dynamic_cluster_leiden, cluster_label_5, length_cluster, share_cluster_max) |> 
+  powerjoin::power_left_join(list(window_start, window_end)) |> 
+  rename(id = dynamic_cluster_leiden, top_words = cluster_label_5) |> 
+  select(id, top_words, window_start, window_end, length_cluster, share_cluster_max)
+
+kable(cluster_summ, "latex", booktabs=T, linesep="", caption = "Cluster Descriptives", col.names = c("ID", "Top Words", "Window (Start)", "Window (End)",
+                                                                                                     "Cluster Length", "Max. Cluster Share"),
+      longtable = T) |> 
+  kable_styling(position = "center", latex_options = "hold_position") |> 
+  column_spec(2, width = "4cm")
+
+```
+
+\newpage
+
+## 1.4 Top Articles per Cluster
+
+```{r articles_per_cluster}
+
+articles_Per_cluster <- nodes |> 
+  filter(dynamic_cluster_leiden %in% clusters_of_interest$dynamic_cluster_leiden) |> 
+  group_by(dynamic_cluster_leiden) |> 
+  slice_max(cited_by_count, n=3) |> 
+  select(dynamic_cluster_leiden, cluster_label_short, title, authors, publication_year, cited_by_count) |> 
+  mutate_at(vars(dynamic_cluster_leiden, cluster_label_short), unfill_vec)
+
+kable(articles_Per_cluster, "latex", caption = "Top Articles per Cluster", longtable = T, col.names = c("ID", "Top Words","Title", "Authors", "Year", "Citations")) |> 
+  kable_styling(latex_options = "hold_position") |> 
+  column_spec(2:4, width = "4cm") 
+  
+  
+
+```
+
+
+
+
+## 1.5 Distribution of Clusters per Field (and vice versa)
+
+
+```{r field dist, fig.width=14, fig.height=14}
+
+
+
+distr <- nodes |> 
+  group_by(field_1, cluster_label_short) |> 
+  summarise(N = n()) |> 
+  drop_na(field_1) |> 
+  group_by(field_1) |> 
+  slice_max(N,n=3, with_ties = F)
+
+
+distr |> 
+  ggplot(aes(x = field_1, y = N, fill = cluster_label_short)) +
+  geom_col(stat = "identity", position = "dodge") +
+  coord_flip() +
+  theme(legend.position = "bottom", legend.text = element_text(size = 8)) 
+
+
+
+
+```
+
+\newpage
+
+```{r field dist cont, fig.height=16, fig.width=12}
+
+distr2 <- nodes |> 
+  group_by(field_1, cluster_label_short) |> 
+  summarise(N = n()) |> 
+  drop_na(field_1) |> 
+  group_by(cluster_label_short) |> 
+  slice_max(N,n=2, with_ties = F) |> 
+  filter(N > 10)
+
+distr2 |> 
+    ggplot(aes(x = cluster_label_short, y = N, fill = field_1)) +
+    geom_col(stat = "identity", position = "dodge") +
+    coord_flip()
+
+
+
+```
+
+
+
+\newpage
+
+# 2. Evolution of Clusters
+
+Cluster-Level Metrics are derived from networks where articles are nodes and edges are based on the strength of bibliographic coupling between articles. The nodes, edges and their information is then aggregated per discipline, here called cluster.
+
+## 2. Relative Number of Nodes and Number of Citations
+
+- Relative number of Nodes:
+\begin{equation}
+RelNodes_{c,f} = \frac{N(V)_{c,f}}{\sum_c^C N(V)_{c,f}} 
+\end{equation}
+where:
+- $RelNodes_{t,c}$ measures the relative number of nodes for cluster $c$ in time window $t$ across all article nodes
+- $N(V)_{t,c}$ measures the total number of nodes for cluster $c$ in time window $t$ across all article nodes. It is therefore defined as $N(V)_{c,f} = \sum_{v_i} 1_{cluster(v_i)=c}$, where $1_{cluster(v_i)=c}$ is an indicator function, taking the value one if article node $v_i$ belongs to cluster $c$.
+
+- The number of citations per cluster and time window is measured as the sum of citations across all articles of a cluster in a give time window, respectively.
+
+```{r nodes_citations}
+plot_type_field_tile(df_long, metric = c("relative_size_nodes")) +
+  ggtitle("Evolution of Relative Number of Nodes per Cluster") 
+plot_type_field_tile(df_long, metric = c("citations")) +
+  ggtitle("Evolution of Citations per Cluster")
+
+
+ggplot(all_metrics,
+       aes(x = window,
+           stratum = cluster_label_short,
+           alluvium = cluster_label_short,
+           y = size_share_window,
+           fill = cluster_label_short)) +
+  geom_flow(stat = "alluvium", lode.guidance = "forward", alpha = 0.8) +
+  geom_stratum(width = 1/12, color = "black") +
+  scale_fill_viridis_d(option = "plasma") +
+  theme_minimal() +
+  theme(legend.title = element_blank(), legend.position = "bottom") +
+ #ggtitle("Alluvial of Field Shares over Time") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Window", y = "Cluster Share per Window")
+```
+
+\newpage
+
+## 2.2 Relative Number of Edges
+
+- Relative Number of Total Edges:
+\begin{equation}
+RelEdges_{t,c} = \frac{N(E)_{t,c}}{\sum_f^F N(E)_{t,c}} 
+\end{equation}
+where:
+- $RelEdges_{t,c}$ measures the relative number of edges incident on nodes within cluster $c$ in time window $t$
+- $N(E)_{t,c}$ measures the total number of edges incident on nodes within cluster $c$ in time window $t$. It is therefore defined as $N(E)_{t,c} = \sum_{e=(v_i,v_j)} 1_{cluster(v_i)=c \: \vee \: cluster(v_j) = c}$, where $1_{cluster(v_k)=c}$ is an indicator function, taking the value one if article node $k$ belongs to cluster $c$
+
+- Relative Number of Within-cluster Edges:
+\begin{equation}
+RelEdgesWithin_{t,c} = \frac{N(E_{within})_{t,c}}{\sum_f^F N(E)_{t,c}} 
+\end{equation}
+where:
+- $RelEdgesWithin_{t,c}$ measures the relative number of edges between article nodes of the same cluster for cluster $c$ in time window $t$
+- $N(E_{within})_{t,c}$ measures the total number of edges between article nodes of the same cluster for cluster $c$ in time window $t$. It is therefore defined as $N(E_{within})_{t,c} = \sum_{e=(v_i,v_j)} 1_{cluster\{(v_i)=c\}} 1_{\{cluster(v_j) = c\}}$, where $1_{cluster(v_k)=c}$ is an indicator function, taking the value one if article node $k$ belongs to cluster $c$.
+
+- Relative Number of Between-cluster Edges:
+\begin{equation}
+RelEdgesBetween_{t,c} = \frac{N(E_{Between})_{t,c}}{\sum_f^F N(E)_{t,c}} 
+\end{equation}
+where:
+- $RelEdgesBetween_{t,c}$ measures the relative number of edges between article nodes of different clusters for cluster $c$ in time window $t$
+- $N(E_{Between})_{t,c}$ measures the total number of edges between article nodes of different clusters for cluster $c$ in time window $t$. It's defined as $N(E_{Between})_{t,c} = \sum_{e=(v_i,v_j)} \left ( 1_{cluster\{(v_i=c)\}} 1_{cluster\{(v_j \neq c)\}} + 1_{cluster\{(v_i \neq c)\}} 1_{cluster\{(v_j = c)\}}  \right )$.
+
+
+```{r edges}
+
+plot_type_field_tile(df_long, metric = c("relative_size_edges"))  +
+  ggtitle("Evolution of Relative Number of Edges per Cluster")
+
+plot_type_field_tile(df_long, metric = c("relative_size_within_edges"))  +
+  ggtitle("Evolution of Relative Number of Edges within Clusters")
+
+plot_type_field_tile(df_long, metric = c("relative_size_between_edges"))  +
+  ggtitle("Evolution of Relative Number of Edges Between Clusters")
+
+```
+
+\newpage
+
+## 2.3 Internal and External Edge Ratio
+- Internal Edge Ratio:
+\begin{equation}
+IR_{t,c} = \frac{N(E_{within})_{t,c}}{N(E)_{t,c}}
+\end{equation}
+- External Edge Ratio:
+\begin{equation}
+ER_{t,c} = \frac{N(E_{between})_{t,c}}{N(E)_{t,c}}
+\end{equation}
+
+with $N(E_{within})_{t,c}$, $N(E_{between})_{t,c}$ and N(E)_{t,c} defined as before. The internal and external ratios therefore measure the ratio of edges within (between) fields relative to the total number of edges of a field. Edges are derived from article-level nodes.
+
+```{r ratios}
+plot_type_field_tile(df_long, metric = c("internalratio")) +
+  ylab(label = "Internal Edge Ratio")  +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("1980-1984", "2000-2004", "2020-2024"))
+
+
+plot_type_field_tile(df_long, metric = c("externalratio")) +
+  ylab(label = "External Edge Ratio")  +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("1980-1984", "2000-2004", "2020-2024"))
+
+
+# Edges(WithinField)/Edges(WithinField)+Edges(BetweenField), Edges(BetweenField)/Edges(WithinField)+Edges(BetweenField)
+```
+
+\newpage
+
+## 2.4 Network Centrality Metrics (Degree, Closeness and Betweennes)
+
+```{r network_stats}
+plot_type_field_tile(df_long, metric = c("degree"))  +
+  ggtitle("Evolution of Cluster-level Degree")
+```
+
+\newpage
+
+```{r network_stats_cont}
+plot_type_field_tile(df_long, metric = c("closeness"))  +
+  ggtitle("Evolution of Cluster-level Closeness")
+plot_type_field_tile(df_long, metric = c("betweeness"))  +
+  ggtitle("Evolution of Cluster-level Betweeness")
+```
+
+
+# 3. Field-Field Connectivity
+
+## 3.1 Average Connectivity
+
+```{r average_connectivity}
+
+all_metrics_field_field_avg <- all_metrics_field_field |> 
+  group_by(cluster_label_min, cluster_label_max) |> 
+  summarise_at(vars(N_edges, N_edges_rel), mean)
+
+
+
+
+ggplot(all_metrics_field_field_avg, aes(x = cluster_label_min, y = cluster_label_max, fill = N_edges)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    panel.grid = element_blank()
+  ) +
+  ggtitle("Average Number of Egdes between Clusters")
+
+
+```
+
+\newpage
+
+```{r average_connectivity_cont}
+
+
+
+ggplot(all_metrics_field_field_avg, aes(x = cluster_label_min, y = cluster_label_max, fill = N_edges_rel)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    panel.grid = element_blank()
+  ) +
+  ggtitle("Average Number of Egdes between Clusters (on a relative basis)")
+
+
+
+```
+\newpage
+
+## 3.2 Connectivity over time 
+
+### 3.2.1 Heatmaps
+
+```{r heatmap n over time, fig.height=16, fig.width=12}
+
+ggplot(all_metrics_field_field, aes(x = cluster_label_min, y = cluster_label_max, fill = N_edges)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma") +
+  facet_wrap(~ window, ncol=6) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    panel.grid = element_blank()
+  ) +
+  ggtitle("Number of Egdes between Clusters over Time")
+
+
+```
+
+
+```{r heatmap n_rel over time,  fig.height=16, fig.width=12}
+
+ggplot(all_metrics_field_field, aes(x = cluster_label_min, y = cluster_label_max, fill = N_edges)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma") +
+  facet_wrap(~ window, ncol=6) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    panel.grid = element_blank()
+  ) +
+  ggtitle("Number of Egdes between Clusters over Time (on a relative basis)")
+ 
+
+```
+
+### 3.2.2 Time Series
+
+```{r edges over time, fig.height=14}
+ggplot(all_metrics_field_field, aes(x = window, y = N_edges, group = pair, color = pair)) +
+  geom_line() +
+  geom_point(size = 1) +
+  facet_wrap(~ str_wrap(pair, width = 20)) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank()) +
+  ggtitle("Number of Egdes between Clusters over Time")
+
+```
+
+\newpage
+
+```{r relative edges over time , fig.height=14}
+ggplot(all_metrics_field_field, aes(x = window, y = N_edges_rel, group = pair, color = pair)) +
+  geom_line() +
+  geom_point(size = 1) +
+  facet_wrap(~ str_wrap(pair, width = 20)) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank())  +
+  ggtitle("Number of Egdes between Clusters over Time (on a relative basis)")
+
+
+```
+
+
+<!-- # 4. Citation Flows -->
+
+<!-- ## 4.1 Internal Coverage -->
+<!-- ```{r internal coverage, results='asis'} -->
+
+<!-- internal_coverage <- data_ref |>  -->
+<!--   group_by(field_from) |>  -->
+<!--   summarise(N = n()) |>  -->
+<!--   ungroup() |>  -->
+<!--   mutate(N_total = sum(N), rel_coverage = round((N/N_total)*100,2)) |>  -->
+<!--   select(Field = field_from, "Total Number of References" = N, "Relative Number of References (in %)" = rel_coverage) -->
+
+<!-- kable(internal_coverage, "latex", booktabs = TRUE, linesep="", caption = "Number of References with Meta Data") |>  -->
+<!--   kable_styling(latex_options = c("hold_position")) |>  -->
+<!--   column_spec(1, width = "5cm") -->
+
+<!-- ``` -->
+
+
+<!-- ## 4.2 Outside/Inside Citations -->
+
+<!-- ### 4.2.1 Per Year -->
+
+<!-- ```{r outside inside year} -->
+
+<!-- field_overview_long |> -->
+<!--   filter(variable %in% c("cic", "coc")) |>  -->
+<!--   ggplot(aes(x = publication_year, y = fraction, fill = variable)) + -->
+<!--   geom_area(alpha = 0.8) + -->
+<!--   scale_y_continuous(labels = scales::percent) + -->
+<!--   labs(y = "Fraction", x = "Year", title = "Outside/Inside Citation per Year") + -->
+<!--   theme_minimal() + -->
+<!--   facet_wrap(~field) + scale_fill_discrete( -->
+<!--   name = "Metric",   # legend title -->
+<!--   labels = c("cic" = "Citations Inside Category",  -->
+<!--              "coc" = "Citations Oustide Category") -->
+<!-- ) + -->
+<!--   theme(legend.position = "bottom")  -->
+
+
+
+<!-- ``` -->
+
+<!-- \newpage -->
+
+<!-- ```{r outside inside year cont} -->
+
+
+
+<!-- field_overview_long |> -->
+<!--   filter(variable %in% c("outside_give", "inside_give")) |>  -->
+<!--   ggplot(aes(x = publication_year, y = fraction, fill = variable)) + -->
+<!--   geom_area(alpha = 0.8) + -->
+<!--   scale_y_continuous(labels = scales::percent) + -->
+<!--   labs(y = "Fraction", x = "Year", title = "Outside/Inside Reference per Year") + -->
+<!--   theme_minimal() + -->
+<!--   facet_wrap(~field) + scale_fill_discrete( -->
+<!--   name = "Metric",   # legend title -->
+<!--   labels = c("inside_give" = "Reference Inside Category",  -->
+<!--              "outside_give" = "Reference Oustide Category") -->
+<!-- ) + -->
+<!--   theme(legend.position = "bottom") -->
+
+<!-- ``` -->
+
+<!-- ### 4.2.2 Per Window (non-overlapping) -->
+
+<!-- ```{r outside inside window} -->
+<!-- field_overview_long_window |> -->
+<!--   filter(variable %in% c("cic", "coc")) |>  -->
+<!--   ggplot(aes(x = window_mid, y = fraction, fill = variable)) + -->
+<!--   geom_area(alpha = 0.8) + -->
+<!--   scale_y_continuous(labels = scales::percent) + -->
+<!--   labs(y = "Fraction", x = "Window", title = "Outside/Inside Citation per Window") + -->
+<!--   theme_minimal() + -->
+<!--   facet_wrap(~field) + scale_fill_discrete( -->
+<!--   name = "Metric",   # legend title -->
+<!--   labels = c("cic" = "Citations Inside Category",  -->
+<!--              "coc" = "Citations Oustide Category") -->
+<!-- ) + -->
+<!--   theme(legend.position = "bottom") -->
+
+
+<!-- ``` -->
+
+<!-- \newpage -->
+
+<!-- ```{r outside inside window cont} -->
+
+
+<!-- field_overview_long_window |> -->
+<!--   filter(variable %in% c("outside_give", "inside_give")) |>  -->
+<!--   ggplot(aes(x = window_mid, y = fraction, fill = variable)) + -->
+<!--   geom_area(alpha = 0.8) + -->
+<!--   scale_y_continuous(labels = scales::percent) + -->
+<!--   labs(y = "Fraction", x = "Window", title = "Outside/Inside Reference per Window") + -->
+<!--   theme_minimal() + -->
+<!--   facet_wrap(~field) + scale_fill_discrete( -->
+<!--   name = "Metric",   # legend title -->
+<!--   labels = c("inside_give" = "Reference Inside Category",  -->
+<!--              "outside_give" = "Reference Oustide Category") -->
+<!-- ) + -->
+<!--   theme(legend.position = "bottom") -->
+<!-- ``` -->
+
+<!-- ### 4.2.3 Per Window (Overlapping) -->
+
+<!-- ```{r outside inside window overlapping} -->
+<!-- field_overview_moving_long |> -->
+<!--   filter(variable %in% c("cic", "coc")) |>  -->
+<!--   ggplot(aes(x = window_moving, y = fraction, fill = variable)) + -->
+<!--   geom_area(aes(group = variable),alpha = 0.8) + -->
+<!--   scale_y_continuous(labels = scales::percent) + -->
+<!--   labs(y = "Fraction", x = "Window") + -->
+<!--   theme_minimal() + -->
+<!--   facet_wrap(~field) + scale_fill_discrete( -->
+<!--   name = "Metric",   # legend title -->
+<!--   labels = c("cic" = "Citations Inside Category",  -->
+<!--              "coc" = "Citations Oustide Category") -->
+<!-- ) + -->
+<!--   theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1)) + -->
+<!--   scale_x_discrete(breaks = c("1980-1984", "2000-2004", "2020-2024")) -->
+
+
+
+<!-- ``` -->
+
+
+<!-- ## 4.3 Citation Flows over Time -->
+
+
+<!-- ```{r citation over time} -->
+
+<!-- ggplot(cit_link_filt, aes(x = publication_year, y = N_rel, color = field_from)) + -->
+<!--   geom_line() + -->
+<!--   facet_wrap(~ field_to) + -->
+<!--   theme_minimal() + -->
+<!--   scale_color_discrete(name = "Field", guide = guide_legend(nrow=2))  + -->
+<!--   theme(legend.position = "bottom") + -->
+<!--   labs(y = "Fraction of Citations from another Field", x = "Year", title = "Fraction of Citations from a Field per Year") -->
+
+<!-- ``` -->
+
+<!-- \newpage -->
+
+<!-- ```{r citation over time cont} -->
+
+
+<!-- ggplot(cit_link_filt_moving, aes(x = window_mid, y = N_rel, color = field_from)) + -->
+<!--   geom_line() + -->
+<!--   facet_wrap(~ field_to) + -->
+<!--   theme_minimal()+ -->
+<!--   scale_color_discrete(name = "Field", guide = guide_legend(nrow=2))  + -->
+<!--   theme(legend.position = "bottom") + -->
+<!--   labs(y = "Fraction of Citations from another Field", x = "Year", title = "Fraction of Citations from a Field per 5-year Rolling Windows") -->
+
+
+<!-- ``` -->
+
+
+<!-- ## 4.4 Alluvial Graph of Flows -->
+
+<!-- ```{r alluvial, fig.height=12, fig.width=16} -->
+
+<!-- cit_link_filt_window <- cit_link_moving |>  -->
+<!--   filter(window_moving %in% c("1980-1984", "2000-2004", "2020-2024"))  -->
+
+
+<!-- ggplot(cit_link_filt_window, -->
+<!--        aes(axis1 = field_from, axis2 = field_to, y = N_rel)) + -->
+<!--   geom_alluvium(aes(fill = field_from), width = 1/12, alpha = 0.8) + -->
+<!--   geom_stratum(width = 1/4, fill = "grey80", color = "black") + -->
+<!--   geom_text(stat = "stratum",  -->
+<!--             aes(label = str_wrap(after_stat(stratum), width = 12))) +   -->
+<!--   facet_wrap(~ window_moving, ncol = 3, scales = "free_y") + -->
+<!--   labs(y = "Fraction of outgoing citations", -->
+<!--        x = NULL) + -->
+<!--   theme_minimal()+ -->
+<!--   theme(legend.position = "none") -->
+
+
+<!-- ``` -->
+

@@ -1,0 +1,443 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  12pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \setmainfont[]{Arial}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Descriptive Statistics},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Descriptive Statistics}
+\author{}
+\date{\vspace{-2.5em}2025-11-07}
+
+\begin{document}
+\maketitle
+
+\section{1. Data Overview}\label{data-overview}
+
+\subsection{1.1 Description of the Data Gathering
+Process}\label{description-of-the-data-gathering-process}
+
+The data considered in the project is from OpenAlex. we use a pair-based
+keyword search to identify articles which use or construct
+game-theoretical models. The keywords we are taken from two lists: 1. A
+list of JEL codes defining the subject of study, i.e.~game theory. 2. A
+list of terms describing game setup which ensures that we only cover
+papers employing or constructing game-theortic models. For each pair of
+keywords, we identify articles based on the appearance of keyword pairs
+in the title or abstract of the paper (\color{red} maybe we also want to
+consider full texts? This would increase the number of articles
+drastically.\color{black}) Currently, we focus only on articles and
+reviews written in English (\color{red}Should we include
+books?\color{black}). We drop articles from the corpus without any
+reference information. As the number of articles is rather low prior to
+1980, we choose this year as the starting point for our analysis.
+
+\subsection{1.2 Search Terms}\label{search-terms}
+
+\begin{table}[H]
+\caption{\label{tab:terms}List of Query Terms}
+
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{l}
+\toprule
+Term\\
+\midrule
+game theory\\
+game-theoretic\\
+cooperative game\\
+cooperative games\\
+noncooperative game\\
+noncooperative games\\
+non-cooperative game\\
+non-cooperative games\\
+stochastic game\\
+stochastic games\\
+dynamic game\\
+dynamic games\\
+evolutionary game\\
+evolutionary games\\
+repeated game\\
+repeated games\\
+bargaining theory\\
+matching theory\\
+\bottomrule
+\end{tabular}
+\centering
+\begin{tabular}[t]{l}
+\toprule
+Term\\
+\midrule
+equilibrium\\
+equilibria\\
+solution concept\\
+solution concepts\\
+payoff matrix\\
+pay-off matrix\\
+payoff matrices\\
+pay-off matrices\\
+strategy\\
+strategies\\
+strategic\\
+preference\\
+preferences\\
+player\\
+players\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{1.3 Descriptive Summary of the
+Data}\label{descriptive-summary-of-the-data}
+
+\begin{table}[H]
+
+\caption{\label{tab:descriptives}Descriptive Summary}
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+Description & \\
+\midrule
+Articles & 34676.00\\
+Year (Begin) & 1980.00\\
+Year (End) & 2024.00\\
+Average Citations per Article & 24.53\\
+Authors & 53383.00\\
+Articles per Author & 1.85\\
+Authors per Article & 2.85\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{1.4 Top Articles}\label{top-articles}
+
+\begin{table}[H]
+
+\caption{\label{tab:articles}Top Articles in Terms of Citations}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{5cm}>{\raggedright\arraybackslash}p{5cm}rr>{\raggedright\arraybackslash}p{3cm}}
+\toprule
+Authors & Title & Year & Citations & Field\\
+\midrule
+David Kempe;Jon Kleinberg;Éva Tardos & Maximizing the spread of influence through a social network & 2003 & 7088 & Physics and Astronomy\\
+David M. Kreps;Robert Wilson & Reputation and imperfect information & 1982 & 3101 & Decision Sciences\\
+György Szabó;Gábor Fáth & Evolutionary games on graphs & 2007 & 2823 & Social Sciences\\
+Amir-Hamed Mohsenian-Rad;Vincent W. S. Wong;Juri Jatskevich;Robert Schober;Alberto Leon‐Garcia & Autonomous Demand-Side Management Based on Game-Theoretic Energy Consumption Scheduling for the Future Smart Grid & 2010 & 2711 & Engineering\\
+Arvind Parkhe & STRATEGIC ALLIANCE STRUCTURING: A GAME THEORETIC AND TRANSACTION COST EXAMINATION OF INTERFIRM COOPERATION. & 1993 & 2581 & Business, Management and Accounting\\
+Xu Chen;Lei Jiao;Wenzhong Li;Xiaoming Fu & Efficient Multi-User Computation Offloading for Mobile-Edge Cloud Computing & 2015 & 2552 & Computer Science\\
+David M. Kreps;Paul Milgrom;John Roberts;Robert Wilson & Rational cooperation in the finitely repeated prisoners' dilemma & 1982 & 2512 & Social Sciences\\
+Drew Fudenberg;Eric Maskin & The Folk Theorem in Repeated Games with Discounting or with Incomplete Information & 1986 & 2371 & Decision Sciences\\
+Hisashi Ohtsuki;Christoph Hauert;E. James Lieberman;Martin A. Nowak & A simple rule for the evolution of cooperation on graphs and social networks & 2006 & 2155 & Social Sciences\\
+Charles F. Manski & Economic Analysis of Social Interactions & 2000 & 2052 & Economics, Econometrics and Finance\\
+Martin Dufwenberg;Georg Kirchsteiger & A theory of sequential reciprocity & 2003 & 1902 & Social Sciences\\
+Ido Erev;Alvin E. Roth & Predicting How People Play Games: Reinforcement Learning in Experimental Games with Unique, Mixed Strategy Equilibria & 1998 & 1822 & Social Sciences\\
+NA & Rationalizability, Learning, and Equilibrium in Games with Strategic Complementarities & 1990 & 1816 & Decision Sciences\\
+Daniel Friedman & Evolutionary Games in Economics & 1991 & 1797 & Economics, Econometrics and Finance\\
+Barry R. Weingast & The Political Foundations of Democracy and the Rule of the Law & 1997 & 1739 & Economics, Econometrics and Finance\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{1.5 Number of Articles per
+Query}\label{number-of-articles-per-query}
+
+\includegraphics[width=1\linewidth]{02_descriptives_files/figure-latex/articles_per_query-1}
+
+\section{2. Publications over Time}\label{publications-over-time}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/publications over time-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/publications over time-2.pdf}}
+
+\section{3. Domain Overview}\label{domain-overview}
+
+\subsection{3.1 Top Domains}\label{top-domains}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/domains-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/domains-2.pdf}}
+
+\subsection{3.2 Domains over Time}\label{domains-over-time}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/domains over time-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/domains over time-2.pdf}}
+
+\section{4. Field Overview}\label{field-overview}
+
+\subsection{4.0}\label{section}
+
+\begin{table}
+
+\caption{\label{tab:list of fields}List of Fields by OpenAlex.}
+\centering
+\begin{tabular}[t]{l}
+\toprule
+Field\\
+\midrule
+Agricultural and Biological Sciences\\
+Arts and Humanities\\
+Biochemistry, Genetics and Molecular Biology\\
+Business, Management and Accounting\\
+Chemical Engineering\\
+Chemistry\\
+Computer Science\\
+Decision Sciences\\
+Earth and Planetary Sciences\\
+Economics, Econometrics and Finance\\
+Energy\\
+Engineering\\
+Environmental Science\\
+Health Professions\\
+Immunology and Microbiology\\
+Materials Science\\
+Mathematics\\
+Medicine\\
+Neuroscience\\
+Nursing\\
+Pharmacology, Toxicology and Pharmaceutics\\
+Physics and Astronomy\\
+Psychology\\
+Social Sciences\\
+Veterinary\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{4.1 Top Fields}\label{top-fields}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/fields-1.pdf}}
+
+\subsection{4.2 Fields over Time}\label{fields-over-time}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/fields over time-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/fields over time-2.pdf}}
+
+\subsection{4.3 Distribution of Fields across
+Queries}\label{distribution-of-fields-across-queries}
+
+\includegraphics[width=1\linewidth]{02_descriptives_files/figure-latex/query_dist-1}
+
+\section{5. Authors Overview}\label{authors-overview}
+
+\subsection{5.1 Top Authors}\label{top-authors}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/authors-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/authors-2.pdf}}
+
+\subsection{5.2 Top Authors per Domain}\label{top-authors-per-domain}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per domain}Top Authors in Terms of Citations per Domain}
+\centering
+\resizebox{\linewidth}{!}{
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+Health Sciences & Life Sciences & Physical Sciences & Social Sciences\\
+\midrule
+Gerry Mackie (765) & Mart R. Gross (1681) & Jon Kleinberg (7136) & Martin A. Nowak (13532)\\
+Alison P. Galvani (519) & Joel S. Brown (1455) & David Kempe (7132) & Matjaž Perc (7535)\\
+Gretchen B. Chapman (519) & Hanna Kokko (1265) & Éva Tardos (7088) & Drew Fudenberg (6258)\\
+Timothy C. Reluga (354) & Rufus A. Johnstone (1262) & Dusit Niyato (6381) & David M. Kreps (5769)\\
+Don M. Hugie (260) & Karl Sigmund (1194) & Tamer Başar (5852) & Robert Wilson (5694)\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per domain}Top Authors in Terms of Publications per Domain}
+\centering
+\resizebox{\linewidth}{!}{
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+Health Sciences & Life Sciences & Physical Sciences & Social Sciences\\
+\midrule
+Jan Rychtář (6) & Joel S. Brown (18) & Dusit Niyato (88) & Martin A. Nowak (70)\\
+K. M. Ariful Kabir (5) & Ross Cressman (11) & Zhu Han (73) & Arne Traulsen (47)\\
+Paolo Russu (5) & J. M. Cushing (9) & Tamer Başar (72) & Matjaž Perc (45)\\
+Angelo Antoci (4) & Jan Rychtář (9) & Quanyan Zhu (66) & Zhen Wang (45)\\
+Chris T. Bauch (4) & Gordon G. McNickle (7) & H. Vincent Poor (60) & Andrzej S. Nowak (39)\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\newpage
+
+\subsection{5.3 Top Authors per Field}\label{top-authors-per-field}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per field}Top Authors in Terms of Citations per Field}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Authors} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Field &  &  & \\
+\midrule
+Business, Management and Accounting & Arvind Parkhe (3117) & Rajiv Lal (1604) & Debabrata Ghosh (1411)\\
+Computer Science & Dusit Niyato (4837) & Xu Chen (4786) & Narayan B. Mandayam (3411)\\
+Decision Sciences & Robert Wilson (3160) & Eric Maskin (3152) & David M. Kreps (3101)\\
+Economics, Econometrics and Finance & Charles F. Manski (2052) & Dilip Abreu (2047) & David Pearce (2005)\\
+Engineering & Vincent W. S. Wong (3052) & Tamer Başar (2956) & Robert Schober (2932)\\
+Mathematics & Kenneth J. Pienta (508) & David Axelrod (451) & Robert Axelrod (451)\\
+Physics and Astronomy & Jon Kleinberg (7111) & David Kempe (7088) & Éva Tardos (7088)\\
+Psychology & Herbert Gintis (411) & Geoffrey F. Miller (399) & Peter M. Todd (368)\\
+Social Sciences & Martin A. Nowak (13206) & Matjaž Perc (7529) & Attila Szolnoki (5442)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per field}Top Authors in Terms of Publications per Field}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Authors} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Field &  &  & \\
+\midrule
+Business, Management and Accounting & Salma Karray (19) & Ata Allah Taleizadeh (18) & Ruiliang Yan (18)\\
+Computer Science & Dusit Niyato (49) & Tamer Başar (36) & Charles Kamhoua (32)\\
+Decision Sciences & Eilon Solan (21) & Jason R. Marden (21) & János Flesch (21)\\
+Economics, Econometrics and Finance & Andrzej S. Nowak (38) & René van den Brink (35) & S.H. Tijs (30)\\
+Engineering & Walid Saad (42) & Zhu Han (41) & Dusit Niyato (38)\\
+Mathematics & K. M. Ariful Kabir (7) & Andrzej Świerniak (5) & Michał Krześlak (5)\\
+Physics and Astronomy & Yan Chen (15) & K. J. Ray Liu (9) & Azhar Iqbal (8)\\
+Psychology & Kevin McGee (4) & Teong Leong Chuah (3) & Timothy Merritt (3)\\
+Social Sciences & Martin A. Nowak (67) & Arne Traulsen (47) & Matjaž Perc (44)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section{6. Journal Overview}\label{journal-overview}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/journals-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/journals-2.pdf}}
+
+\section{7. Distribution of Concepts}\label{distribution-of-concepts}
+
+\includegraphics[width=1\linewidth]{02_descriptives_files/figure-latex/concept_dist-1}
+
+\section{8. Keywords}\label{keywords}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/keywords-1.pdf}}
+
+\begin{table}[H]
+
+\caption{\label{tab:keywords}Top Keywords}
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+keywords & N\\
+\midrule
+Computer science & 26944\\
+Economics & 17281\\
+Game theory & 17061\\
+Mathematics & 15753\\
+Mathematical economics & 12180\\
+Microeconomics & 12089\\
+Business & 9258\\
+Mathematical optimization & 9021\\
+Artificial intelligence & 7572\\
+Nash equilibrium & 7485\\
+Engineering & 6630\\
+Computer network & 4985\\
+Industrial organization & 4327\\
+Marketing & 4181\\
+Telecommunications & 3642\\
+Political science & 3608\\
+Computer security & 3554\\
+Distributed computing & 3446\\
+Operations research & 3150\\
+Psychology & 3069\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

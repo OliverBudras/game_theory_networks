@@ -1,0 +1,384 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Field-Level Analysis},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Field-Level Analysis}
+\author{}
+\date{\vspace{-2.5em}2025-11-20}
+
+\begin{document}
+\maketitle
+
+\section{1. Aggregate Metrics}\label{aggregate-metrics}
+
+The Metrics used here are formally defined on a per-field basis below.
+The aggregate metrics are computed similarly, but over all fields
+instead of per field.
+
+\subsection{1.1 Aggregate Evolution of
+Metrics}\label{aggregate-evolution-of-metrics}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/metrics_agg-1}
+
+\newpage
+
+\subsection{1.2 Number of Nodes and Edges over
+Time}\label{number-of-nodes-and-edges-over-time}
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+Window & Number of Nodes & Number of Edges\\
+\midrule
+1980-1984 & 71 & 203\\
+1981-1985 & 85 & 301\\
+1982-1986 & 104 & 377\\
+1983-1987 & 135 & 582\\
+1984-1988 & 163 & 842\\
+1985-1989 & 233 & 1182\\
+1986-1990 & 248 & 1385\\
+1987-1991 & 270 & 1579\\
+1988-1992 & 307 & 1900\\
+1989-1993 & 316 & 1944\\
+1990-1994 & 302 & 2083\\
+1991-1995 & 339 & 2183\\
+1992-1996 & 346 & 2085\\
+1993-1997 & 364 & 1940\\
+1994-1998 & 406 & 2433\\
+1995-1999 & 477 & 2940\\
+1996-2000 & 545 & 3390\\
+1997-2001 & 598 & 3879\\
+1998-2002 & 776 & 5356\\
+1999-2003 & 948 & 7176\\
+2000-2004 & 1128 & 9121\\
+2001-2005 & 1388 & 12127\\
+2002-2006 & 1754 & 18350\\
+2003-2007 & 2052 & 24776\\
+2004-2008 & 2493 & 33425\\
+2005-2009 & 2985 & 50247\\
+2006-2010 & 3501 & 66059\\
+2007-2011 & 3962 & 76943\\
+2008-2012 & 4380 & 88183\\
+2009-2013 & 4575 & 91423\\
+2010-2014 & 4863 & 96227\\
+2011-2015 & 5102 & 100431\\
+2012-2016 & 5316 & 105586\\
+2013-2017 & 5531 & 106235\\
+2014-2018 & 5778 & 111244\\
+2015-2019 & 5974 & 105257\\
+2016-2020 & 6244 & 109745\\
+2017-2021 & 6746 & 111773\\
+2018-2022 & 7436 & 120666\\
+2019-2023 & 8124 & 136208\\
+2020-2024 & 8282 & 141309\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section{2. Evolution of Fields}\label{evolution-of-fields}
+
+Field-Level Metrics are derived from networks where articles are nodes
+and edges are based on the strength of bibliographic coupling between
+articles. The nodes, edges and their information is then aggregated per
+discipline, here called field.
+
+\subsection{2. Relative Number of Nodes and Number of
+Citations}\label{relative-number-of-nodes-and-number-of-citations}
+
+\begin{itemize}
+\item
+  Relative number of Nodes: \begin{equation}
+  RelNodes_{t,f} = \frac{N(V)_{t,f}}{\sum_f^F N(V)_{t,f}} 
+  \end{equation} where:
+\item
+  \(RelNodes_{t,f}\) measures the relative number of nodes for field
+  \(f\) in time window \(t\) across all article nodes
+\item
+  \(N(V)_{t,f}\) measures the total number of nodes for field \(f\) in
+  time window \(t\) across all article nodes. It is therefore defined as
+  \(N(V)_{t,f} = \sum_{v_i} 1_{field(v_i)=f}\), where
+  \(1_{field(v_i)=f}\) is an indicator function, taking the value one if
+  article node \(v_i\) belongs to field \(f\).
+\item
+  The number of citations per field and time window is measured as the
+  sum of citations across all articles of a field in a give time window,
+  respectively.
+\end{itemize}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/nodes_citations-1}
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/nodes_citations-2}
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/nodes_citations-3}
+
+\newpage
+
+\subsection{2.2 Relative Number of
+Edges}\label{relative-number-of-edges}
+
+\begin{itemize}
+\item
+  Relative Number of Total Edges: \begin{equation}
+  RelEdges_{t,f} = \frac{N(E)_{t,f}}{\sum_f^F N(E)_{t,f}} 
+  \end{equation} where:
+\item
+  \(RelEdges_{t,f}\) measures the relative number of edges incident on
+  nodes within field \(f\) in time window \(t\)
+\item
+  \(N(E)_{t,f}\) measures the total number of edges incident on nodes
+  within field \(f\) in time window \(t\). It is therefore defined as
+  \(N(E)_{t,f} = \sum_{e=(v_i,v_j)} 1_{field(v_i)=f \: \vee \: field(v_j) = f}\),
+  where \(1_{field(v_k)=f}\) is an indicator function, taking the value
+  one if article node \(k\) belongs to field \(f\)
+\item
+  Relative Number of Within-Field Edges: \begin{equation}
+  RelEdgesWithin_{t,f} = \frac{N(E_{within})_{t,f}}{\sum_f^F N(E)_{t,f}} 
+  \end{equation} where:
+\item
+  \(RelEdgesWithin_{t,f}\) measures the relative number of edges between
+  article nodes of the same field for field \(f\) in time window \(t\)
+\item
+  \(N(E_{within})_{t,f}\) measures the total number of edges between
+  article nodes of the same field for field \(f\) in time window \(t\).
+  It is therefore defined as
+  \(N(E_{within})_{t,f} = \sum_{e=(v_i,v_j)} 1_{field\{(v_i)=f\}} 1_{\{field(v_j) = f\}}\),
+  where \(1_{field(v_k)=f}\) is an indicator function, taking the value
+  one if article node \(k\) belongs to field \(f\).
+\item
+  Relative Number of Between-Field Edges: \begin{equation}
+  RelEdgesBetween_{t,f} = \frac{N(E_{Between})_{t,f}}{\sum_f^F N(E)_{t,f}} 
+  \end{equation} where:
+\item
+  \(RelEdgesBetween_{t,f}\) measures the relative number of edges
+  between article nodes of different fields for field \(f\) in time
+  window \(t\)
+\item
+  \(N(E_{Between})_{t,f}\) measures the total number of edges between
+  article nodes of different fields for field \(f\) in time window
+  \(t\). It's defined as
+  \(N(E_{Between})_{t,f} = \sum_{e=(v_i,v_j)} \left ( 1_{field\{(v_i=f)\}} 1_{field\{(v_j \neq f)\}} + 1_{field\{(v_i \neq f)\}} 1_{field\{(v_j = f)\}}  \right )\).
+\end{itemize}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/edges-1}
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/edges-2}
+
+\newpage
+
+\subsection{2.3 Internal and External Edge
+Ratio}\label{internal-and-external-edge-ratio}
+
+\begin{itemize}
+\tightlist
+\item
+  Internal Edge Ratio: \begin{equation}
+  IR_{t,f} = \frac{N(E_{within})_{t,f}}{N(E)_{t,f}}
+  \end{equation}
+\item
+  External Edge Ratio: \begin{equation}
+  ER_{t,f} = \frac{N(E_{between})_{t,f}}{N(E)_{t,f}}
+  \end{equation}
+\end{itemize}
+
+with \(N(E_{within})_{t,f}\), \(N(E_{between})_{t,f}\) and N(E)\_\{t,f\}
+defined as before. The internal and external ratios therefore measure
+the ratio of edges within (between) fields relative to the total number
+of edges of a field. Edges are derived from article-level nodes.
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/ratios-1}
+
+\newpage
+
+\subsection{2.4 Network Centrality Metrics (Degree, Closeness and
+Betweennes)}\label{network-centrality-metrics-degree-closeness-and-betweennes}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/network_stats-1}
+
+\newpage
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/network_stats_cont-1}
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/network_stats_cont-2}
+
+\section{3. Field-Field Connectivity}\label{field-field-connectivity}
+
+\subsection{3.1 Average Connectivity}\label{average-connectivity}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/average_connectivity-1}
+
+\newpage
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/average_connectivity_cont-1}
+\newpage
+
+\subsection{3.2 Connectivity over time}\label{connectivity-over-time}
+
+\subsubsection{3.2.1 Heatmaps}\label{heatmaps}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/heatmap n over time-1}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/heatmap n_rel over time-1}
+
+\subsubsection{3.2.2 Time Series}\label{time-series}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/edges over time-1}
+
+\newpage
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/relative edges over time -1}
+
+\section{4. Citation Flows}\label{citation-flows}
+
+\subsection{4.1 Internal Coverage}\label{internal-coverage}
+
+\begin{table}[!h]
+
+\caption{\label{tab:internal coverage}Number of References with Meta Data}
+\centering
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{5cm}rr}
+\toprule
+Field & Total Number of References & Relative Number of References (in \%)\\
+\midrule
+Agricultural and Biological Sciences & 15878 & 1.45\\
+Arts and Humanities & 6257 & 0.57\\
+Biochemistry, Genetics and Molecular Biology & 15103 & 1.38\\
+Business, Management and Accounting & 122986 & 11.22\\
+Chemical Engineering & 101 & 0.01\\
+Chemistry & 587 & 0.05\\
+Computer Science & 172746 & 15.76\\
+Decision Sciences & 107728 & 9.83\\
+Dentistry & 24 & 0.00\\
+Earth and Planetary Sciences & 2806 & 0.26\\
+Economics, Econometrics and Finance & 134496 & 12.27\\
+Energy & 5772 & 0.53\\
+Engineering & 153172 & 13.98\\
+Environmental Science & 29274 & 2.67\\
+Health Professions & 4473 & 0.41\\
+Immunology and Microbiology & 867 & 0.08\\
+Materials Science & 777 & 0.07\\
+Mathematics & 17842 & 1.63\\
+Medicine & 10669 & 0.97\\
+Neuroscience & 5129 & 0.47\\
+Nursing & 172 & 0.02\\
+Pharmacology, Toxicology and Pharmaceutics & 158 & 0.01\\
+Physics and Astronomy & 20785 & 1.90\\
+Psychology & 14310 & 1.31\\
+Social Sciences & 146557 & 13.37\\
+Veterinary & 142 & 0.01\\
+NA & 106959 & 9.76\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{4.2 Outside/Inside Citations}\label{outsideinside-citations}
+
+\subsubsection{4.2.1 Per Year}\label{per-year}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/outside inside year-1}
+
+\newpage
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/outside inside year cont-1}
+
+\subsubsection{4.2.2 Per Window
+(non-overlapping)}\label{per-window-non-overlapping}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/outside inside window-1}
+
+\newpage
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/outside inside window cont-1}
+
+\subsubsection{4.2.3 Per Window
+(Overlapping)}\label{per-window-overlapping}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/outside inside window overlapping-1}
+
+\subsection{4.3 Citation Flows over
+Time}\label{citation-flows-over-time}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/citation over time-1}
+
+\newpage
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/citation over time cont-1}
+
+\subsection{4.4 Alluvial Graph of Flows}\label{alluvial-graph-of-flows}
+
+\includegraphics[width=1\linewidth]{Field_Level_Analysis_files/figure-latex/alluvial-1}
+
+\end{document}
