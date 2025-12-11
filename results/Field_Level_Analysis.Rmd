@@ -21,6 +21,13 @@ library(kableExtra)
 library(ggalluvial)
 library(knitr)
 library(kableExtra)
+
+
+unfill_vec <- function(x) {
+  same <- x == dplyr::lag(x)
+  ifelse(!is.na(same) & same, "", x)
+}
+
 ```
 
 
@@ -802,6 +809,42 @@ ggplot(cit_link_filt_window,
   theme_minimal()+
   theme(legend.position = "none")
 
+
+```
+
+\newpage
+
+# 5. Topical Analysis of Fields
+
+```{r topic_overview}
+
+data_topics <- readRDS("field_topic_data.RDS") |> 
+  select(-text, -embedding) |> 
+  filter(topic != -1) |> 
+  mutate(topic_keywords = str_replace_all(topic_keywords, "\\[", ""),
+         topic_keywords = str_replace_all(topic_keywords, "\\]", ""),
+         topic_keywords = str_replace_all(topic_keywords, "\\'", ""))
+
+
+topic_overview <-  data_topics |> 
+  group_by(field_1, topic, topic_keywords) |> 
+  summarise(N = n()) |> 
+  mutate(field_1 = unfill_vec(field_1)) 
+
+kbl_obj <- kable(topic_overview, "latex", booktabs = TRUE, linesep="", caption = "Overview of Topics within Fields.", longtable = T, 
+                 col.names = c("Field", "Topic No.", "Keywords","No. Articles"), align = "lclc") |> 
+  kable_styling(latex_options = c("hold_position")) |> 
+  column_spec(1, width = "4cm", border_right = T) |> 
+  column_spec(2, width = "2cm", border_right = T) |> 
+  column_spec(3, width = "8cm", border_right = T) |> 
+  column_spec(4, width = "2cm")
+
+num_rows <- nrow(topic_overview)
+for (i in seq(9, num_rows, by = 9)) {
+  kbl_obj <- kbl_obj |> row_spec(i, extra_latex_after = "\\midrule")
+}
+
+kbl_obj
 
 ```
 
