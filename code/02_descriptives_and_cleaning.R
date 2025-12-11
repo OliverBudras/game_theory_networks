@@ -9,13 +9,13 @@ library(plotly)
 
 ### Data Load
 
-files <- list.files(here("Data/Titles and Abstracts"))
+files <- list.files(here("v3/Data/Titles and Abstracts"))
 
 
 
 read_data <- function(files){
   
-  path <- paste0(here(), "/Data/Titles and Abstracts/", files)
+  path <- paste0(here(), "/v3/Data/Titles and Abstracts/", files)
   
   data_tmp <- readRDS(path) |> 
     mutate(query = str_replace_all(files, ".RDS", "")) 
@@ -123,6 +123,8 @@ source("v2/00_aux.R")
 
 descriptives <- function(data){
   
+  
+  data <- data_final_1980
   
   ## concepts
   
@@ -505,6 +507,28 @@ descriptives <- function(data){
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
   
+  journal_field_dist <- data |> 
+    drop_na(source_display_name, field_1) |> 
+    group_by(field_1, source_display_name) |> 
+    summarise(N = n()) |> 
+    group_by(field_1) |> 
+    slice_max(order_by = N, n=3, with_ties = F) |> 
+    mutate(N_total = sum(N),
+           N_rel= N/N_total) |> 
+    filter(N_total > 10) |> 
+    ggplot(aes(x = field_1, y = N_rel, fill = source_display_name)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = "Top 3 Journals per Field",
+      x = "Field",
+      y = "Relative Frequency"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    scale_fill_discrete("Journal") +
+    coord_flip()
+  
+  
   
   set.seed(123)  # for reproducibility
   wc <- wordcloud(
@@ -553,6 +577,7 @@ descriptives <- function(data){
        concept_dist = concept_dist,
        query_dist = query_dist,
        query_freq = query_freq,
+       journal_field_dist = journal_field_dist,
        wc=wc_record)
   
   
