@@ -183,19 +183,21 @@ N_citations_over_time_domain_tbl |>
 
 # 4. Field Overview
 
-## 4.0
+## 4.1 List of Fields
 
 ```{r list of fields}
 
 data$articles_per_field |> 
   select(field_1) |> 
   rename(Field = field_1) |> 
-  kable("latex", booktabs = T, linesep = "", caption = "List of Fields by OpenAlex.")
+  kable("latex", booktabs = T, linesep = "", caption = "List of Fields by OpenAlex.") |> 
+  kable_styling(latex_options = "hold_position")
 
 ```
 
+\newpage
 
-## 4.1 Top Fields
+## 4.2 Top Fields
 
 ```{r, fields, fig.height=10}
   
@@ -221,7 +223,7 @@ gridExtra::grid.arrange(f1, f2, nrow=2)
 ```
 
 
-## 4.2 Fields over Time
+## 4.3 Fields over Time
 
 
 ```{r fields over time}
@@ -261,7 +263,7 @@ N_citations_over_time_field_tbl |>
 
 ```
 
-## 4.3 Distribution of Fields across Queries
+## 4.4 Distribution of Fields across Queries
 
 
 ```{r query_dist, out.width='100%', fig.height=16, fig.width=16}
@@ -282,6 +284,54 @@ data_raw |>
     theme_minimal(base_size = 14) +
     coord_flip() 
      
+```
+
+## 4.5 Distribution of Journals across fields
+
+```{r journal_field_dist_tbl}
+
+journal_field_dist_raw <- data_raw |> 
+    drop_na(source_display_name, field_1) |> 
+    group_by(field_1, source_display_name) |> 
+    summarise(N = n()) |> 
+    group_by(field_1) |> 
+    slice_max(order_by = N, n=3, with_ties = F) |> 
+    mutate(N_total = sum(N),
+           N_rel= N/N_total) |> 
+    filter(N_total > 10)
+  
+journal_field_dist_clean <- journal_field_dist_raw |> 
+    mutate(source_display_name = paste0(source_display_name, " (", N, ")")) |> 
+    mutate(journal =  paste0("Journal ",row_number())) |> 
+    pivot_wider(id_cols = field_1, names_from = journal, values_from = source_display_name)
+  
+colnames(journal_field_dist_clean)[1] <- "Field"
+
+kable(journal_field_dist_clean, "latex", booktabs = TRUE, linesep = "", caption = "Top Journals per Field") |> 
+    add_header_above(c(" " = 1, "Top Journals per Field (Descending Order)" = 3)) |> 
+    column_spec(c(1:4), width = "4cm") |> 
+    kable_styling(font_size = 10)
+
+
+```
+
+
+```{r journal_field_dist_fig, fig.height=14, fig.width=14}
+
+
+journal_field_dist_raw |> 
+    ggplot(aes(x = field_1, y = N_rel, fill = source_display_name)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = "Top 3 Journals per Field",
+      x = "Field",
+      y = "Relative Frequency"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "bottom") +
+    scale_fill_discrete("Journal") +
+    coord_flip()
+
 ```
 
 
