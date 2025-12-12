@@ -1,0 +1,124 @@
+field_1,topic,topic_keywords,N,N_rel
+Agricultural and Biological Sciences,0,"game, model, competition, males, strategies, theory, species, male, models, evolution",100,0.6666666666666666
+Agricultural and Biological Sciences,1,"disease, growers, tolerant, crop, vaccination, test, css, resistant, control, farmer",4,0.02666666666666667
+Agricultural and Biological Sciences,2,"government, agricultural, game, food, farmers, evolutionary, safety, green, chain, model",46,0.30666666666666664
+Arts and Humanities,0,"security, game, nodes, access, corruption, theoretic, cyberwarfare, malicious, 13, paper",11,0.16923076923076924
+Arts and Humanities,1,"polite, agents, politeness, strategies, model, requests, human, communication, linguistic, behavior",4,0.06153846153846154
+Arts and Humanities,2,"repeated, preferences, player, np, players, mate, turnover, learning, selection, selfish",7,0.1076923076923077
+Arts and Humanities,3,"theory, game, decision, logic, epistemic, games, rational, player, nature, rationality",17,0.26153846153846155
+Arts and Humanities,4,"optimality, pragmatics, entropy, x0d, game, interpretation, mml, theory, based, ontology",9,0.13846153846153847
+Arts and Humanities,5,"patent, firms, industry, firm, industries, goods, thicket, attractiveness, entry, release",4,0.06153846153846154
+Arts and Humanities,6,"games, algorithm, stochastic, optimal, black, white, mean, egalitarian, discrete, allocation",7,0.1076923076923077
+Arts and Humanities,7,"grid, resource, allocation, users, user, spectrum, prices, incentive, networks, equilibrium",6,0.09230769230769231
+"Biochemistry, Genetics and Molecular Biology",0,"host, virulence, model, game, theory, evolutionary, pathogen, disease, vaccine, memory",36,0.3050847457627119
+"Biochemistry, Genetics and Molecular Biology",1,"evolutionary, population, species, ess, dynamics, theory, selection, game, fitness, adaptive",27,0.2288135593220339
+"Biochemistry, Genetics and Molecular Biology",2,"control, game, robustness, games, networks, network, stochastic, genetic, player, environmental",15,0.1271186440677966
+"Biochemistry, Genetics and Molecular Biology",3,"cancer, cells, cell, treatment, tumor, therapy, resistance, mathcal, game, evolutionary",11,0.09322033898305085
+"Biochemistry, Genetics and Molecular Biology",4,"molecular, neural, network, elegans, rna, macromolecules, game, theory, molecule, hg2",7,0.059322033898305086
+"Biochemistry, Genetics and Molecular Biology",5,"bifurcation, matrix, structured, models, theorem, equilibria, extinction, evolutionary, population, darwinian",7,0.059322033898305086
+"Biochemistry, Genetics and Molecular Biology",6,"worker, queens, male, policing, variation, aggression, queen, gp, size, 9bb",6,0.05084745762711865
+"Biochemistry, Genetics and Molecular Biology",7,"government, collaborative, innovation, governance, regulation, companies, pesticide, imitation, food, research",5,0.0423728813559322
+"Biochemistry, Genetics and Molecular Biology",8,"genes, gene, expression, subnetworks, cancer, snps, adenocarcinoma, samples, identifying, network",4,0.03389830508474576
+"Business, Management and Accounting",0,"supply, chain, game, manufacturer, model, retailer, strategy, product, channel, price",1131,0.7421259842519685
+"Business, Management and Accounting",1,"service, customers, game, queueing, games, equilibrium, server, allocation, queue, medical",98,0.06430446194225722
+"Business, Management and Accounting",2,"innovation, strategic, alliances, alliance, theory, knowledge, research, game, firms, strategy",96,0.06299212598425197
+"Business, Management and Accounting",3,"platform, evolutionary, platforms, game, crowdfunding, cloud, manufacturing, supervision, financial, based",78,0.051181102362204724
+"Business, Management and Accounting",4,"design, private, project, projects, risk, ppp, public, based, model, game",59,0.03871391076115486
+"Business, Management and Accounting",5,"audit, reporting, auditing, enforcement, firms, compliance, cser, tax, policy, lobbying",31,0.020341207349081365
+"Business, Management and Accounting",6,"bankruptcy, debt, liquidation, reorganization, game, creditors, corporations, shareholder, shares, equity",19,0.012467191601049869
+"Business, Management and Accounting",7,"mnes, location, urban, airbnb, game, chinatown, venice, streets, semarang, clustering",7,0.004593175853018373
+"Business, Management and Accounting",8,"agriculture, digital, farmers, cooperatives, stakeholders, developing, innovation, framework, country, transformation",5,0.0032808398950131233
+Computer Science,0,"game, network, users, networks, power, based, proposed, equilibrium, algorithm, spectrum",1726,0.5546272493573264
+Computer Science,1,"games, game, agent, agents, learning, based, algorithm, nash, theory, player",672,0.2159383033419023
+Computer Science,2,"game, security, attack, model, blockchain, defense, data, attacks, attacker, network",647,0.20790488431876605
+Computer Science,3,"image, word, semantic, text, game, video, clustering, words, approach, images",24,0.007712082262210797
+Computer Science,4,"image, embedding, watermarking, denoising, steganography, pixels, game, watermark, cover, adaptive",17,0.005462724935732648
+Computer Science,5,"iot, bitc, smart, bsns, body, environments, food, runtime, framework, adaptive",9,0.002892030848329049
+Computer Science,6,"synchronization, oscillators, coupled, evolutionary, model, population, oscillations, behavior, pde, dynamics",7,0.002249357326478149
+Computer Science,7,"cdfg, reconfiguration, synthesis, tool, extraction, time, binding, test, level, module",6,0.0019280205655526992
+Computer Science,8,"tracking, target, targets, mtt, motion, association, particle, visual, develop, estimation",4,0.0012853470437017994
+Decision Sciences,0,"game, games, equilibrium, nash, players, player, equilibria, network, information, theory",1030,0.6490233144297417
+Decision Sciences,1,"auctions, market, product, price, auction, model, game, strategies, advertising, pricing",148,0.09325771896660366
+Decision Sciences,2,"theory, game, strategic, conflict, model, games, rationality, decision, models, systems",105,0.0661625708884688
+Decision Sciences,3,"evolutionary, government, innovation, energy, enterprises, technology, market, electricity, carbon, game",99,0.062381852551984876
+Decision Sciences,4,"fuzzy, decision, game, cooperative, dea, method, making, value, proposed, theory",86,0.05419029615626969
+Decision Sciences,5,"construction, project, projects, bidding, contractors, game, model, government, theory, research",62,0.039067422810333964
+Decision Sciences,6,"risk, safety, decision, theory, game, shapley, value, insurance, security, portfolio",30,0.01890359168241966
+Decision Sciences,7,"crowdsourcing, incentive, mechanism, workers, contests, rating, agents, leader, knowledge, contest",23,0.014492753623188406
+Decision Sciences,8,"alert, citation, alertsnew, manage, added, profile, authors, 1145, hua, siteget",4,0.002520478890989288
+"Economics, Econometrics and Finance",0,"game, games, cooperative, theory, value, coalition, players, solution, core, bargaining",425,0.3181137724550898
+"Economics, Econometrics and Finance",1,"carbon, government, game, environmental, enterprises, model, pollution, innovation, evolutionary, green",287,0.2148203592814371
+"Economics, Econometrics and Finance",2,"stochastic, games, equilibrium, game, state, mean, time, equilibria, markov, dynamic",264,0.19760479041916168
+"Economics, Econometrics and Finance",3,"market, model, investment, game, competition, firms, real, options, price, strategic",187,0.13997005988023953
+"Economics, Econometrics and Finance",4,"monetary, market, information, bank, game, fiscal, financial, model, policy, risk",115,0.08607784431137724
+"Economics, Econometrics and Finance",5,"team, football, game, sports, soccer, play, theory, momentum, players, league",36,0.02694610778443114
+"Economics, Econometrics and Finance",6,"compliance, court, tax, audit, trust, lower, doctrine, securities, taxpayers, model",13,0.009730538922155689
+"Economics, Econometrics and Finance",7,"mean, field, algorithm, equations, problem, discrete, kolmogorov, parabolic, fokker, solving",5,0.0037425149700598802
+"Economics, Econometrics and Finance",8,"economic, arc, growth, course, human, retreat, advance, pressure, development, environment",4,0.0029940119760479044
+Energy,0,"gas, policy, eu, model, russia, natural, european, pg, decision, models",16,0.2711864406779661
+Energy,1,"carbon, game, government, energy, consumers, subsidy, evolutionary, market, vehicles, manufacturers",33,0.559322033898305
+Energy,2,"red, game, player, blue, coal, information, control, approach, application, trajectories",4,0.06779661016949153
+Energy,3,"energy, operation, optimal, planning, storage, distribution, method, optimization, problem, based",6,0.1016949152542373
+Engineering,0,"energy, game, market, power, model, based, electricity, proposed, theory, strategy",1013,0.38356683074592957
+Engineering,1,"game, power, network, networks, allocation, interference, users, channel, proposed, wireless",829,0.31389625141991667
+Engineering,2,"vehicle, vehicles, game, traffic, lane, driver, control, parking, driving, model",284,0.10753502461188943
+Engineering,3,"security, attacker, attacks, defender, cyber, game, attack, defense, systems, physical",242,0.09163195759182129
+Engineering,4,"game, control, target, pursuit, differential, games, evasion, optimal, time, strategy",216,0.08178720181749337
+Engineering,5,"evacuation, crowd, pedestrians, model, pedestrian, exit, emergency, evacuees, behavior, game",33,0.012495266944339266
+Engineering,6,"gate, sizing, crosstalk, noise, interconnect, delay, optimization, wire, conflicting, simultaneous",14,0.005301022340022719
+Engineering,7,"segmentation, image, landmark, detection, anomaly, shape, hyperspectral, clustering, game, clouds",6,0.002271866717152594
+Engineering,8,"ship, safe, computer, collision, design, trajectory, positional, safety, objects, sea",4,0.0015145778114350624
+Environmental Science,0,"government, recycling, waste, carbon, game, evolutionary, power, model, supply, energy",61,0.3719512195121951
+Environmental Science,1,"marine, fisheries, fish, management, cooperative, stock, fishers, fishing, fishery, economic",28,0.17073170731707318
+Environmental Science,2,"evolutionary, game, land, government, governments, local, construction, governance, compensation, pollution",25,0.1524390243902439
+Environmental Science,3,"height, plant, leaf, hydraulic, plants, water, trees, al, growth, tree",11,0.06707317073170732
+Environmental Science,4,"water, energy, decision, management, gt, lt, infrastructure, cooperative, resources, iwemgs",10,0.06097560975609756
+Environmental Science,5,"prey, coyotes, individuals, parasitism, patch, spatial, seabirds, foraging, food, bluegills",9,0.054878048780487805
+Environmental Science,6,"geoengineering, climate, cooperation, counter, game, students, solar, collective, class, intervention",9,0.054878048780487805
+Environmental Science,7,"herders, institutional, grazing, harmful, grassland, variation, institutions, pastoral, degradation, nonutilitarian",8,0.04878048780487805
+Environmental Science,8,"citizen, avicaching, science, programs, coral, invasive, protect, ecosystems, protection, resources",3,0.018292682926829267
+Health Professions,0,"safety, construction, game, supervision, evolutionary, behavior, government, workers, management, enterprises",21,0.6
+Health Professions,1,"service, care, game, telehealth, patient, allocation, medical, patients, elderly, model",14,0.4
+Mathematics,0,"cells, cancer, tumor, cell, growth, evolutionary, zone, tumour, treatment, models",28,0.18421052631578946
+Mathematics,1,"fuzzy, game, cooperative, generalized, math, shapley, parameters, games, function, nash",15,0.09868421052631579
+Mathematics,2,"vaccination, game, epidemic, model, public, individuals, disease, strategy, covid, 19",69,0.45394736842105265
+Mathematics,3,"wager, player, jim, time, theoretic, game, pascal, ruin, betting, negotiation",6,0.039473684210526314
+Mathematics,4,"games, game, nash, equilibrium, problem, mean, field, equations, equilibria, graphon",34,0.2236842105263158
+Medicine,0,"prey, predator, habitat, predators, food, foraging, dormitive, active, strategy, game",6,0.07142857142857142
+Medicine,1,"game, games, equilibrium, nash, distributed, stability, time, seeking, function, non",40,0.47619047619047616
+Medicine,2,"students, game, education, trade, ai, theory, school, defence, online, learning",4,0.047619047619047616
+Medicine,3,"dynamics, epidemic, disease, individuals, susceptible, infected, model, transmission, sis, models",8,0.09523809523809523
+Medicine,4,"vaccination, vaccine, strain, population, optimal, epidemic, vaccinating, coverage, perceived, game",5,0.05952380952380952
+Medicine,5,"vaccination, data, influenza, voluntary, disease, individual, self, altruism, itc, theoretic",6,0.07142857142857142
+Medicine,6,"enterprises, medical, governments, government, reward, disposal, evolutionary, penalty, patient, safety",10,0.11904761904761904
+Medicine,7,"compliance, hcws, medical, care, test, equilibrium, decision, stroke, jme, incidental",5,0.05952380952380952
+Neuroscience,0,"game, learning, neurons, muscle, model, human, reinforcement, population, walking, strategies",11,0.5
+Neuroscience,1,"comparison, social, moral, sensitivity, values, agents, guilt, justice, japan, sense",6,0.2727272727272727
+Neuroscience,2,"social, person, study, neural, problems, fair, people, making, activity, second",5,0.22727272727272727
+Physics and Astronomy,0,"social, networks, network, game, information, community, model, influence, dynamics, based",162,0.41968911917098445
+Physics and Astronomy,1,"quantum, games, game, classical, theory, mml, entanglement, player, players, strategies",78,0.20207253886010362
+Physics and Astronomy,2,"network, defense, security, attack, game, model, attacker, networks, strategy, defender",44,0.11398963730569948
+Physics and Astronomy,3,"users, game, cooperation, strategy, spectrum, networks, access, evolutionary, social, network",26,0.06735751295336788
+Physics and Astronomy,4,"public, evolutionary, opinion, government, internet, information, game, model, media, leaders",25,0.06476683937823834
+Physics and Astronomy,5,"theory, game, model, agent, models, human, decision, behavior, strategic, modeling",22,0.05699481865284974
+Physics and Astronomy,6,"enterprises, government, environmental, energy, green, power, evolutionary, local, carbon, game",15,0.038860103626943004
+Physics and Astronomy,7,"estimation, distributed, parameter, density, activation, coalitional, game, algorithm, problem, mean",9,0.023316062176165803
+Physics and Astronomy,8,"riccati, solution, differential, stochastic, algebraic, equations, linear, strategy, controller, time",5,0.012953367875647668
+Psychology,0,"choice, mate, care, mating, females, male, males, reproductive, female, copying",18,0.2535211267605634
+Psychology,1,"game, learning, students, games, theory, xlink, w3, inf, org, http",18,0.2535211267605634
+Psychology,2,"medical, privacy, social, network, protection, integration, mechanism, users, psychological, evolutionary",7,0.09859154929577464
+Psychology,3,"action, game, model, joint, negotiation, interaction, subjects, fusion, partner, coordination",6,0.08450704225352113
+Psychology,4,"team, ai, mate, human, mates, participants, game, robot, perceived, computer",6,0.08450704225352113
+Psychology,5,"reasoning, automatic, imitation, forward, backward, context, blind, incentives, evidence, strategic",5,0.07042253521126761
+Psychology,6,"aggression, video, play, cooperative, game, violent, rhp, experiment, prisoners, outgroup",4,0.056338028169014086
+Psychology,7,"emotions, emotion, making, decision, ketelaar, moral, economic, expectations, guilt, decisions",4,0.056338028169014086
+Psychology,8,"design, topsis, conceptual, ke, gra, schemes, product, team, scheme, objectives",3,0.04225352112676056
+Social Sciences,0,"game, evolutionary, cooperation, theory, games, model, strategy, strategies, social, players",1502,0.8538942581011939
+Social Sciences,1,"traffic, game, model, users, road, privacy, equilibrium, based, transportation, online",187,0.10631040363843093
+Social Sciences,2,"household, households, schelling, model, efficiency, matching, segregation, residential, preferences, women",23,0.013075611142694713
+Social Sciences,3,"violence, micro, accessed, theory, 2008, http, games, felson, game, com",16,0.009096077316657191
+Social Sciences,4,"investment, risk, optimal, insurance, reinsurance, asset, problem, pension, variance, company",10,0.005685048322910745
+Social Sciences,5,"rumor, diffusion, rumors, propagation, image, pixels, censorship, platforms, health, model",8,0.0045480386583285955
+Social Sciences,6,"disaster, disasters, reconstruction, recovery, relocation, sri, lanka, postdisaster, flooding, tsunami",5,0.0028425241614553724
+Social Sciences,7,"swarm, unmanned, uav, autonomous, collaboration, mechanism, communication, strategy, dominance, evolutionary",4,0.0022740193291642978
+Social Sciences,8,"hotel, entrant, newest, season, atmosphere, hotels, daily, suburban, demand, rate",4,0.0022740193291642978

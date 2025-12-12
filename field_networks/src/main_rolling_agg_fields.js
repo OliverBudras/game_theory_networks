@@ -1,6 +1,7 @@
 import Graph from "graphology";
 import Sigma from "sigma";
 import { NodeBorderProgram } from "@sigma/node-border";
+import * as d3 from "d3";
 
 const container = document.getElementById("sigma-container");
 const infoBox = document.getElementById("node-info");
@@ -11,6 +12,20 @@ const toggleBtn = document.getElementById("toggle-labels");
 const graph = new Graph();
 const state = { selectedNode: null, selectedNeighbors: null };
 let labelsVisible = true; // track label visibility
+
+
+let bertopicData = [];
+
+d3.csv("public/bertopic_topics.csv").then(data => {
+  // Convert numeric columns
+  bertopicData = data.map(d => ({
+    field: d.field_1,
+    topic: d.topic,
+    keywords: d.topic_keywords,
+    N: +d.N,
+    N_rel: +d.N_rel
+  }));
+});
 
 // -------------------------
 // Field → color mapping
@@ -39,6 +54,78 @@ let labelsVisible = true; // track label visibility
     //legendContainer.appendChild(item);
   //});
 //}
+
+
+function renderDonutChart(fieldName) {
+  const container = d3.select("#topic-donut");
+  container.selectAll("*").remove(); // clear old chart
+
+  const minNrel = 0.05; // threshold
+  const fieldTopics = bertopicData.filter(d => d.field === fieldName && d.N_rel >= minNrel);
+  if (fieldTopics.length === 0) {
+    container.append("div").text("No BERTopic data for this field.");
+    return;
+  }
+
+  const width = 250;
+  const height = 250;
+  const radius = Math.min(width, height) / 2;
+
+  const svg = container
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", `translate(${width / 2},${height / 2})`);
+
+  const color = d3.scaleOrdinal()
+    .domain(fieldTopics.map(d => d.topic))
+    .range(d3.schemeCategory10);
+
+  const pie = d3.pie()
+    .sort(null)
+    .value(d => d.N_rel);
+
+  const arc = d3.arc()
+    .innerRadius(radius * 0.5)
+    .outerRadius(radius * 0.9);
+
+  const tooltip = d3.select("#donut-tooltip");
+
+  svg.selectAll("path")
+    .data(pie(fieldTopics))
+    .enter()
+    .append("path")
+    .attr("d", arc)
+    .attr("fill", d => color(d.data.topic))
+    .attr("stroke", "white")
+    .style("stroke-width", "2px")
+    .on("mouseover", (event, d) => {
+      tooltip.style("display", "block")
+             .html(`<b>${d.data.keywords}</b>`);
+    })
+    .on("mousemove", (event) => {
+      tooltip.style("left", (event.pageX + 10) + "px")
+             .style("top", (event.pageY + 10) + "px");
+    })
+    .on("mouseout", () => {
+      tooltip.style("display", "none");
+    });
+
+  // Optional: small labels
+  svg.selectAll("text")
+    .data(pie(fieldTopics))
+    .enter()
+    .append("text")
+    .text(d => d.data.topic)
+    .attr("transform", d => `translate(${arc.centroid(d)})`)
+    .style("font-size", "9px")
+    .style("text-anchor", "middle");
+}
+
+
+
+
 
 // -------------------------
 // Sigma setup
@@ -69,12 +156,14 @@ renderer.on("clickNode", ({ node })=>{
     state.selectedNode=null;
     state.selectedNeighbors=null;
     infoBox.style.display="none";
+    d3.select("#topic-donut").selectAll("*").remove();
   } else {
     state.selectedNode=node;
     state.selectedNeighbors=new Set(graph.neighbors(node));
     state.selectedNeighbors.add(node);
     const n = graph.getNodeAttributes(node);
-    infoBox.innerHTML=`
+    const nodeDetails = document.getElementById("node-details");
+    nodeDetails.innerHTML=`
 <div><b>Node Information</b></div>
 <div class="field"><span class="label">Field:</span><span class="value">${n.id ?? ""}</span></div>
 <div class="field"><span class="label">Citations:</span><span class="value">${n.citations ?? ""}</span></div>
@@ -88,6 +177,7 @@ renderer.on("clickNode", ({ node })=>{
 <div class="field"><span class="label">External Edge Ratio:</span><span class="value">${n.externalratio ?? ""}</span></div>
 <div class="field"><span class="label">Internal Edge Ratio:</span><span class="value">${n.internalratio ?? ""}</span></div>`;
     infoBox.style.display="block";
+    renderDonutChart(n.id);
   }
   renderer.refresh();
 });
