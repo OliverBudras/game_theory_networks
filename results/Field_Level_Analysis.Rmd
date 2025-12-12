@@ -21,6 +21,7 @@ library(kableExtra)
 library(ggalluvial)
 library(knitr)
 library(kableExtra)
+library(tidytext)
 
 
 unfill_vec <- function(x) {
@@ -366,7 +367,7 @@ facet_wrap(
 # 1. Aggregate Metrics
 The Metrics used here are formally defined on a per-field basis below. The aggregate metrics are computed similarly, but over all fields instead of per field.
 
-## 1.1 Aggregate Evolution of Metrics
+## 1.1 Evolution Aggregate of Metrics
 
 ```{r metrics_agg, cache=TRUE}
 plot_type(df_long)
@@ -814,6 +815,47 @@ ggplot(cit_link_filt_window,
 
 \newpage
 
+## 4.5 Citation Flow Dispersion
+
+```{r citation disp}
+
+disp_overall <- cit_link_moving |> 
+  group_by(field_to) |> 
+  summarise(entropy = sum(-N_rel*log(N_rel)))
+
+kable(disp_overall, "latex", booktabs = T, linesep = "", col.names = c("Field", "Flow Entropy"), caption = "Citation Flow Entropy across Fields") |> 
+  kable_styling(latex_options = "hold_position")
+
+
+```
+
+\newpage
+
+```{r citation disp cont}
+
+
+disp_window <- cit_link_moving |> 
+  group_by(field_to, window_moving) |> 
+  summarise(entropy = sum(-N_rel*log(N_rel)))
+  
+
+
+disp_window |> 
+  ggplot(aes(window_moving, entropy)) +
+  geom_point() +
+  facet_wrap(~field_to) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("1980-1984", "2000-2004", "2020-2024")) +
+  labs(x = "Window", y = "Entropy", title = "Field-level Entropy over Time")
+
+```
+
+
+
+
+\newpage
+
 # 5. Topical Analysis of Fields
 
 ```{r topic_overview}
@@ -845,6 +887,39 @@ for (i in seq(9, num_rows, by = 9)) {
 }
 
 kbl_obj
+
+```
+
+\newpage
+
+```{r topic_overview_cont, fig.height=12}
+
+data_topics |> 
+  group_by(field_1, topic, topic_keywords) |> 
+  summarise(N = n()) |> 
+  group_by(field_1) |> 
+  mutate(N_rel = N / sum(N)) |> 
+  slice_max(order_by = N_rel, n = 3, with_ties = FALSE) |>
+  ungroup() |>
+  ggplot(aes(
+    x = reorder_within(topic_keywords, N_rel, field_1),
+    y = N_rel,
+    fill = topic_keywords
+  )) +
+  geom_col() +
+  labs(x = "") +
+  scale_x_reordered() +
+  facet_wrap(~ field_1, scales = "free_x")  +
+  labs(x = "") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+    legend.key.width = unit(0.5, "cm"),            
+    legend.box = "vertical",                      
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.text = element_text(size = 7)) +
+  scale_fill_discrete("Keywords", guide = guide_legend(ncol = 2))
 
 ```
 
