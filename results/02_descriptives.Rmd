@@ -101,12 +101,12 @@ top_articles <- top_articles[1:15,]
 top_articles <- top_articles |> 
   select(authors,title, publication_year, cited_by_count, field_1, subfield_1)
 colnames(top_articles) <- c("Authors","Title", "Year","Citations", "Field", "Subfield")
-kable(top_articles, booktabs=T, "latex", linesep="", caption = "Top Articles in Terms of Citations") |> 
+kable(top_articles, booktabs=T, "latex", linesep="", caption = "Top Articles in Terms of Citations", longtable=T) |> 
   kable_styling(latex_options = c("center","HOLD_position"), font_size = 8) |> 
-  column_spec(1, width = "5cm", border_right = ) |> 
-  column_spec(2, width = "5cm") |> 
-  column_spec(4, width = "3cm")  |> 
-  column_spec(5, width = "3cm") 
+  column_spec(1, width = "3cm") |> 
+  column_spec(2, width = "3cm") |> 
+  column_spec(5, width = "3cm")  |> 
+  column_spec(6, width = "3cm") 
 ```
 
 ## 1.5 Number of Articles per Query
