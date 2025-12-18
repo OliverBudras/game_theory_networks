@@ -1,0 +1,1061 @@
+---
+title: "Descriptive Statistics"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: yes
+  header-includes:
+  - "\\usepackage{subcaption}"
+mainfont: "Arial"
+fontsize: 12pt
+date: "2025-11-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = F, message = F)
+
+library(tidyverse)
+library(openalexR)
+library(tidyverse)
+library(here)
+library(bibliometrix)
+library(bibliometrixData)
+library(ggwordcloud)
+library(kableExtra)
+library(readxl)
+
+
+unfill_vec <- function(x) {
+  same <- x == dplyr::lag(x)
+  ifelse(!is.na(same) & same, "", x)
+}
+
+```
+
+# 1. Data Overview
+
+## 1.1 Description of the Data Gathering Process
+
+The data considered in the project is from OpenAlex. We use a pair-based keyword search to identify articles which use or construct game-theoretical models. The keywords we are taken from two lists: 1. A list of JEL codes defining the subject of study, i.e. game theory. 2. A list of terms describing game setup which ensures that we only cover papers employing or constructing game-theortic models. For each pair of keywords, we identify articles based on the appearance of keyword pairs in the title or abstract of the paper (\color{red} maybe we also want to consider full texts? This would increase the number of articles drastically.\color{black}) Currently, we focus only on articles and reviews written in English (\color{red}Should we include books?\color{black}). We drop articles from the corpus without any reference information. As the number of articles is rather low prior to 1980, we choose this year as the starting point for our analysis. In this version ("v4"), we furthermore consider only articles which have journal information and whose journals are listed by the USNSF in order to assign disciplines to journals similar to Truc et al. (2023).
+s
+
+## 1.2 Search Terms
+
+```{r terms, results='asis'}
+
+jel_terms <- read_excel(here("JEL_code_terms.xlsx"))
+
+game_terms <- read_excel(here("game_description_terms.xlsx"))
+
+t1 <- jel_terms 
+t2 <- game_terms 
+
+kable(list(t1, t2),"latex", booktabs=T, valign="t", linesep="", caption = "List of Query Terms") %>%
+  kable_styling(latex_options = "HOLD_position", font_size = 10)
+
+```
+
+
+```{r data load, cache=TRUE}
+
+data_raw <- readRDS(here("data_final_1980.RDS"))
+
+data_concepts <- data_raw |> 
+    select(oa_id, concepts) |> 
+    unnest(cols = c(concepts)) 
+
+data <- readRDS(here("descriptives.RDS"))
+
+fields_of_interest <- c("Computer Science", "Business, Management and Accounting", "Decision Sciences", "Social Sciences", "Engineering", "Economics, Econometrics and Finance", "Mathematics", "Psychology", "Physics and Astronomy")
+
+
+author_field <- data_raw |> 
+    select(oa_id, title, field_1, subfield_1, discipline, authorships, cited_by_count) |> 
+    unnest(cols = c(authorships)) |> 
+    select(oa_id, title, display_name, cited_by_count, field_1, subfield_1, discipline) |> 
+    group_by(oa_id) |> 
+    mutate(authors = paste(display_name, collapse = ";"), .groups = "drop") |> 
+    ungroup() |> 
+    distinct(oa_id, .keep_all = T) 
+
+```
+
+\newpage
+
+
+## 1.3 Descriptive Summary of the Data
+
+```{r descriptives}
+kable(data$description_table, booktabs=T, "latex", linesep="", caption = "Descriptive Summary") |> 
+  kable_styling(position = "center", latex_options = "HOLD_position")
+```
+
+\newpage
+
+## 1.4 Top Articles
+
+```{r articles}
+top_articles <- data$top_articles 
+top_articles[13,1] <- NA
+top_articles <- top_articles[1:15,]
+top_articles <- top_articles |> 
+  select(authors,title, publication_year, cited_by_count, field_1, subfield_1)
+colnames(top_articles) <- c("Authors","Title", "Year","Citations", "Field", "Subfield")
+kable(top_articles, booktabs=T, "latex", linesep="", caption = "Top Articles in Terms of Citations", longtable=T) |> 
+  kable_styling(latex_options = c("center","HOLD_position"), font_size = 8) |> 
+  column_spec(1, width = "3cm") |> 
+  column_spec(2, width = "3cm") |> 
+  column_spec(5, width = "3cm")  |> 
+  column_spec(6, width = "3cm") 
+```
+
+## 1.5 Number of Articles per Query
+
+```{r articles_per_query, out.width="100%", fig.height=16, fig.width=12}
+data_raw |> 
+    group_by(query) |> 
+    summarise(N = n()) |> 
+    ggplot(aes(x=fct_reorder(query,N), y=N)) +
+    geom_col() +
+    coord_flip() +
+    labs(x = "N", y = "Query")
+    
+```
+
+
+
+
+
+# 2. Publications over Time
+
+```{r publications over time, fig.cap="Publication and Citations over Time"}
+N_over_time_tbl <- data$N_over_time_tbl
+
+ggplot(N_over_time_tbl, aes(publication_year, No_publications)) +
+    geom_line() +
+    labs(y="Publicatiions", x="Year") +
+    theme_bw() +
+    theme(panel.grid = element_blank())
+  
+ggplot(N_over_time_tbl, aes(publication_year, No_citations)) +
+    geom_line()+
+    labs(y="Citations", x="Year") +
+    theme_bw() +
+    theme(panel.grid = element_blank())
+```
+
+# 3. Domain Overview
+
+## 3.1 Top Domains
+
+```{r domains, fig.cap="Number of Publication or Citations per Domain or Field"}
+
+articles_per_domain <- data$articles_per_domain
+
+
+ggplot(articles_per_domain,aes(No_publications, domain_1)) +
+    geom_bar(stat = "identity", color="black", fill = "grey") +
+    labs(y = "Domain", x="Publications") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )  
+ggplot(articles_per_domain,aes(No_citations, domain_1)) +
+    geom_bar(stat = "identity", color="black", fill = "grey") +
+    labs(y = "Domain", x="Citations") +
+    theme_bw() +
+    theme(panel.grid = element_blank())  +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )
+  
+```
+
+## 3.2 Domains over Time
+
+```{r domains over time, fig.cap="Number of Publications per Domain or Field over Time"}
+N_publications_over_time_domain_tbl<- data$N_publications_over_time_domain_tbl
+N_citations_over_time_domain_tbl <- data$N_citations_over_time_domain_tbl
+
+N_publications_over_time_domain_tbl |> 
+    pivot_longer(!publication_year, names_to = "Domain",values_to = "No_publications") |> 
+    ggplot(aes(publication_year,No_publications, color=Domain)) +
+    geom_line() +
+    labs(x = "Year", y="Publications") +
+    theme_bw() +
+    theme(panel.grid = element_blank(), legend.position = "bottom") +
+    scale_x_continuous(expand = c(0,0), limits = c(1980,2025))
+
+N_citations_over_time_domain_tbl |> 
+    pivot_longer(!publication_year, names_to = "Domain",values_to = "No_citations") |> 
+    ggplot(aes(publication_year,No_citations, color=Domain)) +
+    geom_line() +
+    labs(x = "Year", y="Citations") +
+    theme_bw() +
+    theme(panel.grid = element_blank(), legend.position = "bottom") +
+    scale_x_continuous(expand = c(0,0), limits = c(1980,2025))
+  
+
+```
+
+# 4. Field Overview
+
+## 4.1 List of Fields
+
+```{r list of fields}
+
+data$articles_per_field |> 
+  select(field_1) |> 
+  rename(Field = field_1) |> 
+  kable("latex", booktabs = T, linesep = "", caption = "List of Fields by OpenAlex.") |> 
+  kable_styling(latex_options = "hold_position")
+
+```
+
+\newpage
+
+## 4.2 Top Fields
+
+```{r, fields, fig.height=10}
+  
+articles_per_field <- data$articles_per_field 
+
+f1 <- ggplot(articles_per_field,aes(No_publications, fct_reorder(field_1, No_publications))) +
+    geom_bar(stat = "identity", color="black", fill = "grey") +
+    labs(y = "Field", x="Publications") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )  
+f2 <- ggplot(articles_per_field,aes(No_citations, fct_reorder(field_1, No_citations))) +
+    geom_bar(stat = "identity", color="black", fill = "grey") +
+    labs(y = "Field", x="Citations") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )
+gridExtra::grid.arrange(f1, f2, nrow=2)
+```
+
+
+## 4.3 Fields over Time
+
+
+```{r fields over time}
+N_publications_over_time_field_tbl<-data$N_publications_over_time_field_tbl |> 
+  select(any_of(fields_of_interest))
+N_citations_over_time_field_tbl <- data$N_citations_over_time_field_tbl |> 
+  select(any_of(fields_of_interest))
+
+N_publications_over_time_field_tbl |> 
+    pivot_longer(!publication_year, names_to = "field_1",values_to = "No_publications") |> 
+    ggplot(aes(publication_year,No_publications, color=field_1)) +
+    geom_line()+
+    theme_bw()  +
+    theme(legend.position = "bottom") + theme(
+      legend.text = element_text(size = 6),
+      legend.title = element_blank(),
+      legend.spacing = unit(0.05,"lines"),
+      legend.key.size = unit(0.5, "lines"),
+      panel.grid = element_blank())  +
+    scale_x_continuous(expand = c(0,0), limits = c(1980,2025)) +
+    labs(x = "Year", y="Publications") 
+
+
+N_citations_over_time_field_tbl |> 
+    pivot_longer(!publication_year, names_to = "field_1",values_to = "No_citations") |> 
+    ggplot(aes(publication_year,No_citations, color=field_1)) +
+    geom_line()+
+    theme_bw()  +
+    theme(legend.position = "bottom") + theme(
+      legend.text = element_text(size = 6),
+      legend.key.size = unit(0.5, "lines"),
+      legend.title = element_blank(),
+      legend.spacing = unit(0.01,"lines"),
+      panel.grid = element_blank())  +
+    scale_x_continuous(expand = c(0,0), limits = c(1980,2025)) +
+    labs(x = "Year", y="Citations") 
+
+```
+
+## 4.4 Distribution of Fields across Queries
+
+
+```{r query_dist, out.width='100%', fig.height=16, fig.width=16}
+data_raw |> 
+    filter(field_1 %in% fields_of_interest) |> 
+    group_by(query, field_1) |> 
+    summarise(N = n()) |>
+    group_by(query) |> 
+    slice_max(order_by = N, n=3, with_ties = F) |> 
+    rename(Field = field_1) |> 
+    ggplot(aes(x = query, y = N, fill = Field)) +
+    geom_col(stat = "identity", position = "dodge") +
+    labs(
+      title = "Top 3 Fields per Query",
+      x = "Topic",
+      y = "Count"    
+    ) +
+    theme_minimal(base_size = 14) +
+    coord_flip() 
+     
+```
+
+## 4.5 Distribution of Journals across fields
+
+```{r journal_field_dist_tbl}
+
+journal_field_dist_raw <- data_raw |> 
+    drop_na(source_display_name, field_1) |> 
+    group_by(field_1, source_display_name) |> 
+    summarise(N = n()) |> 
+    group_by(field_1) |> 
+    slice_max(order_by = N, n=3, with_ties = F) |> 
+    mutate(N_total = sum(N),
+           N_rel= N/N_total) |> 
+    filter(N_total > 10)
+  
+journal_field_dist_clean <- journal_field_dist_raw |> 
+    mutate(source_display_name = paste0(source_display_name, " (", N, ")")) |> 
+    mutate(journal =  paste0("Journal ",row_number())) |> 
+    pivot_wider(id_cols = field_1, names_from = journal, values_from = source_display_name)
+  
+colnames(journal_field_dist_clean)[1] <- "Field"
+
+kable(journal_field_dist_clean, "latex", booktabs = TRUE, linesep = "", caption = "Top Journals per Field") |> 
+    add_header_above(c(" " = 1, "Top Journals per Field (Descending Order)" = 3)) |> 
+    column_spec(c(1:4), width = "4cm") |> 
+    kable_styling(font_size = 10)
+
+
+```
+
+```{r journal_field_dist_fig, fig.height=14, fig.width=14}
+
+
+journal_field_dist_raw |> 
+    ggplot(aes(x = field_1, y = N_rel, fill = source_display_name)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = "Top 3 Journals per Field",
+      x = "Field",
+      y = "Relative Frequency"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "bottom") +
+    scale_fill_discrete("Journal") +
+    coord_flip()
+
+```
+
+\newpage
+
+## 4.6 Top Articles per Field
+
+```{r top_articles_per_field}
+
+article_field_dist_raw <- author_field |> 
+    group_by(field_1) |> 
+    slice_max(order_by = cited_by_count, n=3, with_ties = F) |> 
+    ungroup() |> 
+    filter(field_1 %in% fields_of_interest) |> 
+    select(field_1, authors, title, cited_by_count) |> 
+    mutate(title = tolower(title), field_1 = unfill_vec(field_1))
+    
+  
+kable(article_field_dist_raw, "latex", booktabs = TRUE, linesep = "", caption = "Top Articles per Field", align = "lllc",
+      col.names = c("Field", "Authors", "Title", "No. Citations"), longtable = T) |> 
+    add_header_above(c(" " = 1, "Top Articles per Field (Descending Order)" = 3)) |> 
+    column_spec(c(1:3), width = "4cm") |> 
+    kable_styling(font_size = 10)
+
+```
+
+
+
+
+\newpage
+
+# 5. Subfield Overview
+
+## 5.1 List of Subfields
+
+```{r list of subfields}
+
+data$articles_per_subfield |> 
+  #select(subfield_1) |> 
+  #rename(Subfield = subfield_1) |> 
+  kable("latex", booktabs = T, linesep = "", caption = "List of Subfields by OpenAlex.", longtable = T, col.names = c("Subfield", "No. Publications", "No. Citations")) |> 
+  kable_styling(latex_options = "hold_position") |> 
+  column_spec(1, border_left = T) |> 
+  column_spec(3, border_right = T)
+
+```
+
+
+## 5.2 Top Subfields
+
+```{r, subfields, fig.height=10}
+  
+articles_per_subfield <- data$articles_per_subfield 
+
+articles_per_subfield_publications <- articles_per_subfield |> 
+  slice_max(order_by = No_publications, n = 30)
+
+
+articles_per_subfield_citations <- articles_per_subfield |> 
+  slice_max(order_by = No_citations, n = 30)
+
+
+f1 <- ggplot(articles_per_subfield_publications,aes(No_publications, fct_reorder(subfield_1, No_publications))) +
+    geom_bar(stat = "identity", color="black", fill = "grey") +
+    labs(y = "Subield", x="Publications") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )  
+f2 <- ggplot(articles_per_subfield_citations,aes(No_citations, fct_reorder(subfield_1, No_citations))) +
+    geom_bar(stat = "identity", color="black", fill = "grey") +
+    labs(y = "Subield", x="Citations") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )
+gridExtra::grid.arrange(f1, f2, nrow=2)
+```
+
+## 5.3 Subfields over Time
+
+
+```{r subfields over time, fig.height=8}
+
+N_publications_over_time_subfield_tbl<-data$N_publications_over_time_subfield_tbl
+
+
+
+
+
+N_publications_over_time_subfield_tbl |> 
+    pivot_longer(!publication_year, names_to = "subfield_1",values_to = "No_publications") |> 
+    filter(subfield_1 %in% articles_per_subfield_publications$subfield_1) |> 
+    ggplot(aes(publication_year,No_publications, color=subfield_1)) +
+    geom_line()+
+    theme_bw()  +
+    theme(legend.position = "bottom") + theme(
+      legend.text = element_text(size = 6),
+      legend.title = element_blank(),
+      legend.spacing = unit(0.05,"lines"),
+      legend.key.size = unit(0.5, "lines"),
+      panel.grid = element_blank())  +
+    scale_x_continuous(expand = c(0,0), limits = c(1980,2025)) +
+    labs(x = "Year", y="Publications") +
+    theme(legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+    legend.key.width = unit(0.5, "cm"),            
+    legend.box = "vertical",                      
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.text = element_text(size = 7)) +
+    scale_color_discrete("Subfields", guide = guide_legend(ncol = 2))
+
+
+```
+
+
+
+
+## 5.4 Distribution of Journals across Subfields
+
+```{r journal_subfield_dist_tbl}
+
+journal_subfield_dist_raw <- data_raw |> 
+    drop_na(source_display_name, subfield_1) |> 
+    group_by(subfield_1, source_display_name) |> 
+    summarise(N = n()) |> 
+    group_by(subfield_1) |> 
+    slice_max(order_by = N, n=3, with_ties = F) |> 
+    mutate(N_total = sum(N),
+           N_rel= N/N_total) |> 
+    filter(N_total > 10 & subfield_1 %in% articles_per_subfield_publications$subfield_1)
+  
+journal_field_dist_clean <- journal_subfield_dist_raw |> 
+    mutate(source_display_name = paste0(source_display_name, " (", N, ")")) |> 
+    mutate(journal =  paste0("Journal ",row_number())) |> 
+    pivot_wider(id_cols = subfield_1, names_from = journal, values_from = source_display_name)
+  
+colnames(journal_field_dist_clean)[1] <- "Subield"
+
+kable(journal_field_dist_clean, "latex", booktabs = TRUE, linesep = "", caption = "Top Journals per Subfield", longtable = T) |> 
+    add_header_above(c(" " = 1, "Top Journals per Subfield (Descending Order)" = 3)) |> 
+    column_spec(c(1:4), width = "4cm") |> 
+    kable_styling(font_size = 10)
+
+
+```
+
+```{r journal_subfield_dist_fig, fig.height=14, fig.width=14}
+
+
+journal_subfield_dist_raw |> 
+    ggplot(aes(x = subfield_1, y = N_rel, fill = source_display_name)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = "Top 3 Journals per Subfield",
+      x = "Field",
+      y = "Relative Frequency"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "bottom") +
+    scale_fill_discrete("Journal") +
+    coord_flip() +
+    theme(legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+    legend.key.width = unit(0.5, "cm"),            
+    legend.box = "vertical",                      
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.text = element_text(size = 7)) +
+    scale_fill_discrete("Subfields", guide = guide_legend(ncol = 3))
+
+```
+
+\newpage
+
+## 5.5 Top Articles per Subfield
+
+```{r top_articles_per_subfield}
+
+article_subfield_dist_raw <- author_field |> 
+    group_by(subfield_1) |> 
+    slice_max(order_by = cited_by_count, n=3, with_ties = F) |> 
+    ungroup() |> 
+    filter(subfield_1 %in% articles_per_subfield_citations$subfield_1) |> 
+    select(subfield_1, authors, title, cited_by_count) |> 
+    mutate(title = tolower(title), subfield_1 = unfill_vec(subfield_1))
+    
+  
+kable(article_subfield_dist_raw, "latex", booktabs = TRUE, linesep = "", caption = "Top Articles per subfield", align = "lllc",
+      col.names = c("Subfield", "Authors", "Title", "No. Citations"), longtable = T) |> 
+    add_header_above(c(" " = 1, "Top Articles per Subfield (Descending Order)" = 3)) |> 
+    column_spec(c(2:3), width = "4cm") |> 
+    kable_styling(font_size = 10) |> 
+  column_spec(1, border_left = T, width = "4cm") |> 
+  column_spec(4, border_right = T)
+
+```
+
+
+
+\newpage
+
+```{r subfields over time cont, fig.height=8}
+
+N_citations_over_time_subfield_tbl <- data$N_citations_over_time_subfield_tbl 
+
+
+N_citations_over_time_subfield_tbl |> 
+    pivot_longer(!publication_year, names_to = "subfield_1",values_to = "No_citations") |> 
+    filter(subfield_1 %in% articles_per_subfield_citations$subfield_1) |> 
+    ggplot(aes(publication_year,No_citations, color=subfield_1)) +
+    geom_line()+
+    theme_bw()  +
+    theme(legend.position = "bottom") + theme(
+      legend.text = element_text(size = 6),
+      legend.key.size = unit(0.5, "lines"),
+      legend.title = element_blank(),
+      legend.spacing = unit(0.01,"lines"),
+      panel.grid = element_blank())  +
+    scale_x_continuous(expand = c(0,0), limits = c(1980,2025)) +
+    labs(x = "Year", y="Citations")  +
+    theme(legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+    legend.key.width = unit(0.5, "cm"),            
+    legend.box = "vertical",                      
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.text = element_text(size = 7)) +
+    scale_color_discrete("Subfields", guide = guide_legend(ncol = 2))
+
+
+```
+
+
+\newpage
+
+# 6. Discipline Overview
+
+## 6.1 List of Disciplines
+
+```{r list of discplines}
+
+data$articles_per_discipline |> 
+  #select(subfield_1) |> 
+  #rename(Subfield = subfield_1) |> 
+  kable("latex", booktabs = T, linesep = "", caption = "List of Disciplines", col.names = c("Discipline", "No. Publications", "No. Citations")) |> 
+  kable_styling(latex_options = "hold_position") |> 
+  column_spec(1, border_left = T) |> 
+  column_spec(3, border_right = T)
+
+```
+
+
+## 6.2 Top Disciplines
+
+```{r, disciplines, fig.height=10}
+  
+articles_per_discipline <- data$articles_per_discipline
+
+f1 <- ggplot(articles_per_discipline,aes(No_publications, fct_reorder(discipline, No_publications))) +
+    geom_bar(stat = "identity", color="black", fill = "grey") +
+    labs(y = "Discipline", x="Publications") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )  
+f2 <- ggplot(articles_per_discipline,aes(No_citations, fct_reorder(discipline, No_citations))) +
+    geom_bar(stat = "identity", color="black", fill = "grey") +
+    labs(y = "Discipline", x="Citations") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )
+gridExtra::grid.arrange(f1, f2, nrow=2)
+```
+
+## 6.3 Disciplines over Time
+
+
+```{r disciplines over time, fig.height=8}
+
+N_publications_over_time_discipline_tbl<-data$N_publications_over_time_discipline_tbl
+
+N_publications_over_time_discipline_tbl |> 
+    pivot_longer(!publication_year, names_to = "discipline",values_to = "No_publications") |> 
+    ggplot(aes(publication_year,No_publications, color=discipline)) +
+    geom_line()+
+    theme_bw()  +
+    theme(legend.position = "bottom") + theme(
+      legend.text = element_text(size = 6),
+      legend.title = element_blank(),
+      legend.spacing = unit(0.05,"lines"),
+      legend.key.size = unit(0.5, "lines"),
+      panel.grid = element_blank())  +
+    scale_x_continuous(expand = c(0,0), limits = c(1980,2025)) +
+    labs(x = "Year", y="Publications") +
+    theme(legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+    legend.key.width = unit(0.5, "cm"),            
+    legend.box = "vertical",                      
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.text = element_text(size = 7)) +
+    scale_color_discrete("Disciplines", guide = guide_legend(ncol = 3))
+
+
+```
+
+
+
+
+## 6.4 Distribution of Journals across Disciplines
+
+```{r journal_discipline_dist_tbl}
+
+journal_discipline_dist_raw <- data_raw |> 
+    drop_na(source_display_name, discipline) |> 
+    group_by(discipline, source_display_name) |> 
+    summarise(N = n()) |> 
+    group_by(discipline) |> 
+    slice_max(order_by = N, n=3, with_ties = F) |> 
+    mutate(N_total = sum(N),
+           N_rel= N/N_total) |> 
+    filter(N_total > 10)
+  
+journal_field_dist_clean <- journal_discipline_dist_raw |> 
+    mutate(source_display_name = paste0(source_display_name, " (", N, ")")) |> 
+    mutate(journal =  paste0("Journal ",row_number())) |> 
+    pivot_wider(id_cols = discipline, names_from = journal, values_from = source_display_name)
+  
+colnames(journal_field_dist_clean)[1] <- "Discipline"
+
+kable(journal_field_dist_clean, "latex", booktabs = TRUE, linesep = "", caption = "Top Journals per Discipline", longtable = T) |> 
+    add_header_above(c(" " = 1, "Top Journals per discipline (Descending Order)" = 3)) |> 
+    column_spec(c(1:4), width = "4cm") |> 
+    kable_styling(font_size = 10)
+
+
+```
+
+\newpage
+
+```{r journal_discipline_dist_fig, fig.height=14, fig.width=14}
+
+
+journal_discipline_dist_raw |> 
+    ggplot(aes(x = discipline, y = N_rel, fill = source_display_name)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(
+      title = "Top 3 Journals per Discipline",
+      x = "Field",
+      y = "Relative Frequency"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "bottom") +
+    scale_fill_discrete("Journal") +
+    coord_flip() +
+    theme(legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+    legend.key.width = unit(0.5, "cm"),            
+    legend.box = "vertical",                      
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.text = element_text(size = 7)) +
+    scale_fill_discrete("Disciplines", guide = guide_legend(ncol = 3))
+
+```
+
+\newpage
+
+## 6.5 Top Articles per Discipline
+
+```{r top_articles_per_discipline}
+
+article_discipline_dist_raw <- author_field |> 
+    group_by(discipline) |> 
+    slice_max(order_by = cited_by_count, n=3, with_ties = F) |> 
+    ungroup() |> 
+    select(discipline, authors, title, cited_by_count) |> 
+    mutate(title = tolower(title), discipline = unfill_vec(discipline))
+    
+  
+kable(article_discipline_dist_raw, "latex", booktabs = TRUE, linesep = "", caption = "Top Articles per Discipline", align = "lllc",
+      col.names = c("Discipline", "Authors", "Title", "No. Citations"), longtable = T) |> 
+    add_header_above(c(" " = 1, "Top Articles per Discipline (Descending Order)" = 3)) |> 
+    column_spec(c(2:3), width = "4cm") |> 
+    kable_styling(font_size = 10) |> 
+  column_spec(1, border_left = T, width = "4cm") |> 
+  column_spec(4, border_right = T)
+
+```
+
+
+
+\newpage
+
+
+```{r disciplines over time cont, fig.height=8}
+
+N_citations_over_time_discipline_tbl <- data$N_citations_over_time_discipline_tbl 
+
+
+N_citations_over_time_discipline_tbl |> 
+    pivot_longer(!publication_year, names_to = "discipline",values_to = "No_citations") |> 
+    ggplot(aes(publication_year,No_citations, color=discipline)) +
+    geom_line()+
+    theme_bw()  +
+    theme(legend.position = "bottom") + theme(
+      legend.text = element_text(size = 6),
+      legend.key.size = unit(0.5, "lines"),
+      legend.title = element_blank(),
+      legend.spacing = unit(0.01,"lines"),
+      panel.grid = element_blank())  +
+    scale_x_continuous(expand = c(0,0), limits = c(1980,2025)) +
+    labs(x = "Year", y="Citations")  +
+    theme(legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+    legend.key.width = unit(0.5, "cm"),            
+    legend.box = "vertical",                      
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.text = element_text(size = 7)) +
+    scale_color_discrete("Disciplines", guide = guide_legend(ncol = 2))
+
+
+```
+
+\newpage
+
+
+## 6.6 Discipline Composition of Field (by OA)
+
+
+```{r field composition by discipline, fig.width=18, fig.height=18, out.width="100%"}
+
+
+data_raw |> 
+  select(oa_id, field_1, discipline)|> 
+  drop_na(field_1, discipline) |> 
+  group_by(field_1, discipline) |> 
+  summarise(N = n()) |> 
+  ungroup() |> 
+  group_by(field_1) |> 
+  mutate(N_total = sum(N), N_rel=N/N_total) |> 
+  ggplot(aes(x="", y=N_rel, fill=discipline)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  facet_wrap(~field_1) +
+  labs(
+    title = "Discipline Composition of Fields",
+    x = "",
+    y = ""
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "bottom") +
+  scale_fill_discrete("Discipline", guide = guide_legend(ncol = 3)) +
+  theme(legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+        legend.key.width = unit(0.5, "cm"),            
+        legend.box = "vertical",                      
+        legend.box.margin = margin(5, 5, 5, 5),
+        legend.text = element_text(size = 10)) 
+
+
+```
+
+\newpage
+
+## 6.7 Field Composition (by OA) of Disciplines
+
+
+```{r discipline composition by field, fig.width=18, fig.height=18, out.width="100%"}
+
+
+data_raw |> 
+  select(oa_id, field_1, discipline)|> 
+  drop_na(field_1, discipline) |> 
+  group_by(field_1, discipline) |> 
+  summarise(N = n()) |> 
+  ungroup() |> 
+  group_by(discipline) |> 
+  mutate(N_total = sum(N), N_rel=N/N_total) |> 
+  ggplot(aes(x="", y=N_rel, fill=field_1)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  facet_wrap(~discipline) +
+  labs(
+    title = "Discipline Composition of Fields",
+    x = "",
+    y = ""
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "bottom") +
+  scale_fill_discrete("Discipline", guide = guide_legend(ncol = 3)) +
+  theme(legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+        legend.key.width = unit(0.5, "cm"),            
+        legend.box = "vertical",                      
+        legend.box.margin = margin(5, 5, 5, 5),
+        legend.text = element_text(size = 10)) 
+
+
+```
+
+
+
+
+# 7. Authors Overview
+
+## 7.1 Top Authors
+
+```{r authors, fig.cap="Top Authors in Terms of Publications or Citations"}
+top_authors_publications_tbl <- data$top_authors_publications_tbl[1:30,]
+
+top_authors_citations_tbl <- data$top_authors_citations_tbl[1:30,]
+
+top_authors_publications_tbl |> 
+    ggplot(aes(No_publications,fct_reorder(author, No_publications))) +
+    geom_bar(stat = "identity", color = "black", fill = "grey") +
+    labs(y="Author", x="Publications") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )    
+  
+top_authors_citations_tbl |> 
+    ggplot(aes(No_citations,fct_reorder(author, No_citations))) +
+    geom_bar(stat = "identity", color = "black", fill = "grey") +
+    labs(y="Author", x="Citations") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )
+```
+
+## 7.2 Top Authors per Domain
+
+```{r authors per domain}
+kable(data$top_authors_domain_citations_tbl, booktabs=T, "latex", linesep="", caption = "Top Authors in Terms of Citations per Domain") |> 
+  kable_styling(position = "center", latex_options = c("HOLD_position", "scale_down"), font_size = 10)
+
+kable(data$top_authors_domain_publications_tbl, booktabs=T, "latex", linesep="", caption = "Top Authors in Terms of Publications per Domain") |> 
+  kable_styling(position = "center", latex_options = c("HOLD_position", "scale_down"), font_size = 10)
+```
+
+\newpage
+
+## 7.3 Top Authors per Field
+
+```{r authors per field}
+
+test <- data$top_authors_field_citations_tbl[1:3,] |> t() |> data.frame() |> rownames_to_column("Field") |> 
+  filter(Field %in% fields_of_interest)
+colnames(test)[2:4] <- ""
+
+kable(test, booktabs=T, "latex", linesep="", caption = "Top Authors in Terms of Citations per Field") |> 
+  add_header_above(c(" " = 1, "Authors" = 3)) |> 
+  kable_styling(font_size = 8, latex_options = "HOLD_position") 
+
+test2 <- data$top_authors_field_publications_tbl[1:3,] |> t() |> data.frame() |> rownames_to_column("Field") |> 
+    filter(Field %in% fields_of_interest)
+
+colnames(test2)[2:4] <- ""
+
+kable(test2, booktabs=T, "latex", linesep="", caption = "Top Authors in Terms of Publications per Field") |> 
+  add_header_above(c(" " = 1, "Authors" = 3)) |> 
+  kable_styling(font_size = 8, latex_options = "HOLD_position")
+```
+
+\newpage
+
+## 7.4 Top Authors per Subfield
+
+```{r authors per subfield}
+
+test <- data$top_authors_subfield_citations_tbl[1:3,] |> t() |> data.frame() |> rownames_to_column("Subield") |> 
+  filter(Subield %in% articles_per_subfield_citations$subfield_1)
+colnames(test)[2:4] <- ""
+
+kable(test, booktabs=T, "latex", linesep="", caption = "Top Authors in Terms of Citations per Subield") |> 
+  add_header_above(c(" " = 1, "Authors" = 3)) |> 
+  kable_styling(font_size = 8, latex_options = "HOLD_position") 
+
+```
+
+\newpage
+
+```{r authors per subfield cont}
+
+test2 <- data$top_authors_subfield_publications_tbl[1:3,] |> t() |> data.frame() |> rownames_to_column("Subfield") |> 
+    filter(Subfield %in% articles_per_subfield_publications$subfield_1)
+
+colnames(test2)[2:4] <- ""
+
+kable(test2, booktabs=T, "latex", linesep="", caption = "Top Authors in Terms of Publications per Subfield") |> 
+  add_header_above(c(" " = 1, "Authors" = 3)) |> 
+  kable_styling(font_size = 8, latex_options = "HOLD_position")
+```
+
+
+
+## 7.5 Top Authors per Discipline
+
+```{r authors per discipline}
+
+test <- data$top_authors_discipline_citations_tbl[1:3,] |> t() |> data.frame() |> rownames_to_column("Discipline")
+colnames(test)[2:4] <- ""
+
+kable(test, booktabs=T, "latex", linesep="", caption = "Top Authors in Terms of Citations per Discipline") |> 
+  add_header_above(c(" " = 1, "Authors" = 3)) |> 
+  kable_styling(font_size = 8, latex_options = "HOLD_position") 
+
+```
+
+\newpage
+
+```{r authors per discipline cont}
+
+test2 <- data$top_authors_discipline_publications_tbl[1:3,] |> t() |> data.frame() |> rownames_to_column("Discipline") 
+
+colnames(test2)[2:4] <- ""
+
+kable(test2, booktabs=T, "latex", linesep="", caption = "Top Authors in Terms of Publications per Subfield") |> 
+  add_header_above(c(" " = 1, "Authors" = 3)) |> 
+  kable_styling(font_size = 8, latex_options = "HOLD_position")
+```
+
+
+
+\newpage
+
+# 8. Journal Overview
+
+```{r journals, fig.cap="Top Journals in Terms of Publications or Citations"}
+
+top_journals_publications_tbl <- data$top_journals_publications_tbl
+top_journals_citations_tbl <- data$top_journals_citations_tbl
+
+
+top_journals_publications_tbl |> 
+    arrange(desc(No_publications)) |> 
+    slice_max(order_by = No_publications, n = 30) |> 
+    ggplot(aes(No_publications,fct_reorder(journal, No_publications))) +
+    geom_bar(stat = "identity", color="black", fill="grey") +
+    labs(y="Journal", x="Publications") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )  
+top_journals_citations_tbl |> 
+    arrange(desc(No_citations)) |> 
+    slice_max(order_by = No_citations, n = 30) |> 
+    ggplot(aes(No_citations,fct_reorder(journal, No_citations))) +
+    geom_bar(stat = "identity", color="black", fill="grey") +
+    labs(y="Journal", x="Citations") +
+    theme_bw() +
+    theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )
+```
+
+# 9. Distribution of Concepts
+
+```{r concept_dist, fig.width=16, fig.height=12, out.width='100%'}
+
+data_concepts |> 
+    drop_na(level) |> 
+    group_by(display_name) |> 
+    summarise(N = n(), level = unique(level)) |> 
+    group_by(level) |> 
+    slice_max(order_by = N, n = 50) |> 
+    mutate(display_name = fct_reorder(display_name, N)) |> 
+    ggplot(aes(x = display_name, y = N)) +
+    geom_col() +
+    facet_wrap(~level, scales = "free") +
+    coord_flip()
+
+```
+
+
+# 10. Keywords
+
+```{r keywords}
+
+keywords_tbl <- data$keywords_tbl
+colnames(keywords_tbl) <- c("Word", "N")
+
+keywords_tbl |> 
+  ggplot(aes(N,fct_reorder(Word, N))) +
+  geom_bar(stat = "identity", color="black", fill ="grey") +
+  labs(y="Word", x="N") +
+  theme_bw() +
+  theme(panel.grid = element_blank()) +
+ scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05))  # 0% below, 5% above
+  )
+
+kable(data$keywords_tbl, booktabs=T, "latex", linesep="", caption = "Top Keywords") |> 
+  kable_styling(position = "center", latex_options = "HOLD_position")
+
+# keywords_prep <- data$keywords_prep[1:200,]
+# 
+# set.seed(123)  # for reproducibility
+# ggplot(keywords_prep, aes(label = keywords, size=N))+
+#   geom_text_wordcloud()
+
+```
+
