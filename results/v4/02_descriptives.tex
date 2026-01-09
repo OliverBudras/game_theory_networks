@@ -1,0 +1,1224 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  12pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \setmainfont[]{Arial}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Descriptive Statistics},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Descriptive Statistics}
+\author{}
+\date{\vspace{-2.5em}2025-11-07}
+
+\begin{document}
+\maketitle
+
+\section{1. Data Overview}\label{data-overview}
+
+\subsection{1.1 Description of the Data Gathering
+Process}\label{description-of-the-data-gathering-process}
+
+The data considered in the project is from OpenAlex. We use a pair-based
+keyword search to identify articles which use or construct
+game-theoretical models. The keywords we are taken from two lists: 1. A
+list of JEL codes defining the subject of study, i.e.~game theory. 2. A
+list of terms describing game setup which ensures that we only cover
+papers employing or constructing game-theortic models. For each pair of
+keywords, we identify articles based on the appearance of keyword pairs
+in the title or abstract of the paper (\color{red} maybe we also want to
+consider full texts? This would increase the number of articles
+drastically.\color{black}) Currently, we focus only on articles and
+reviews written in English (\color{red}Should we include
+books?\color{black}). We drop articles from the corpus without any
+reference information. As the number of articles is rather low prior to
+1980, we choose this year as the starting point for our analysis. In
+this version (``v4''), we furthermore consider only articles which have
+journal information and whose journals are listed by the USNSF in order
+to assign disciplines to journals similar to Truc et al.~(2023).
+
+\subsection{1.2 Search Terms}\label{search-terms}
+
+\begin{table}[H]
+\caption{\label{tab:terms}List of Query Terms}
+
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{l}
+\toprule
+Term\\
+\midrule
+game theory\\
+game-theoretic\\
+cooperative game\\
+cooperative games\\
+noncooperative game\\
+noncooperative games\\
+non-cooperative game\\
+non-cooperative games\\
+stochastic game\\
+stochastic games\\
+dynamic game\\
+dynamic games\\
+evolutionary game\\
+evolutionary games\\
+repeated game\\
+repeated games\\
+bargaining theory\\
+matching theory\\
+\bottomrule
+\end{tabular}
+\centering
+\begin{tabular}[t]{l}
+\toprule
+Term\\
+\midrule
+equilibrium\\
+equilibria\\
+solution concept\\
+solution concepts\\
+payoff matrix\\
+pay-off matrix\\
+payoff matrices\\
+pay-off matrices\\
+strategy\\
+strategies\\
+strategic\\
+preference\\
+preferences\\
+player\\
+players\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{1.3 Descriptive Summary of the
+Data}\label{descriptive-summary-of-the-data}
+
+\begin{table}[H]
+
+\caption{\label{tab:descriptives}Descriptive Summary}
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+Description & \\
+\midrule
+Articles & 17743.00\\
+Year (Begin) & 1980.00\\
+Year (End) & 2024.00\\
+Average Citations per Article & 37.54\\
+Authors & 31851.00\\
+Articles per Author & 1.65\\
+Authors per Article & 2.96\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{1.4 Top Articles}\label{top-articles}
+
+\begingroup\fontsize{8}{10}\selectfont
+
+\begin{longtable}[t]{>{\raggedright\arraybackslash}p{2.75cm}>{\raggedright\arraybackslash}p{2.75cm}rr>{\raggedright\arraybackslash}p{2.75cm}>{\raggedright\arraybackslash}p{2.75cm}>{\raggedright\arraybackslash}p{2.75cm}}
+\caption{\label{tab:articles}Top Articles in Terms of Citations}\\
+\toprule
+Authors & Title & Year & Citations & Field & Subfield & Discipline\\
+\midrule
+David M. Kreps;Robert Wilson & Reputation and imperfect information & 1982 & 3101 & Decision Sciences & Management Science and Operations Research & Economics\\
+Amir-Hamed Mohsenian-Rad;Vincent W. S. Wong;Juri Jatskevich;Robert Schober;Alberto Leon‐Garcia & Autonomous Demand-Side Management Based on Game-Theoretic Energy Consumption Scheduling for the Future Smart Grid & 2010 & 2711 & Engineering & Electrical and Electronic Engineering & Engineering and Technology\\
+Arvind Parkhe & STRATEGIC ALLIANCE STRUCTURING: A GAME THEORETIC AND TRANSACTION COST EXAMINATION OF INTERFIRM COOPERATION. & 1993 & 2581 & Business, Management and Accounting & Strategy and Management & Management\\
+David M. Kreps;Paul Milgrom;John Roberts;Robert Wilson & Rational cooperation in the finitely repeated prisoners' dilemma & 1982 & 2512 & Social Sciences & Safety Research & Economics\\
+Drew Fudenberg;Eric Maskin & The Folk Theorem in Repeated Games with Discounting or with Incomplete Information & 1986 & 2371 & Decision Sciences & Management Science and Operations Research & Economics\\
+Hisashi Ohtsuki;Christoph Hauert;E. James Lieberman;Martin A. Nowak & A simple rule for the evolution of cooperation on graphs and social networks & 2006 & 2155 & Social Sciences & Sociology and Political Science & Biomedical Research\\
+Charles F. Manski & Economic Analysis of Social Interactions & 2000 & 2052 & Economics, Econometrics and Finance & Economics and Econometrics & Economics\\
+Martin Dufwenberg;Georg Kirchsteiger & A theory of sequential reciprocity & 2003 & 1902 & Social Sciences & Safety Research & Economics\\
+Ido Erev;Alvin E. Roth & Predicting How People Play Games: Reinforcement Learning in Experimental Games with Unique, Mixed Strategy Equilibria & 1998 & 1822 & Social Sciences & Safety Research & Economics\\
+Paul Milgrom;John Roberts & Rationalizability, Learning, and Equilibrium in Games with Strategic Complementarities & 1990 & 1816 & Decision Sciences & Management Science and Operations Research & Economics\\
+Daniel Friedman & Evolutionary Games in Economics & 1991 & 1797 & Economics, Econometrics and Finance & Economics and Econometrics & Economics\\
+Barry R. Weingast & The Political Foundations of Democracy and the Rule of the Law & 1997 & 1739 & Economics, Econometrics and Finance & Economics and Econometrics & Political Science\\
+Mart R. Gross & Alternative reproductive strategies and tactics: diversity within sexes & 1996 & 1681 & Agricultural and Biological Sciences & Ecology, Evolution, Behavior and Systematics & Biology\\
+Robert J. Aumann & Correlated Equilibrium as an Expression of Bayesian Rationality & 1987 & 1603 & Decision Sciences & Management Science and Operations Research & Economics\\
+Amitav Mukherjee;S. Ali. A. Fakoorian;Jing Huang;A. Lee Swindlehurst & Principles of Physical Layer Security in Multiuser Wireless Networks: A Survey & 2014 & 1427 & Engineering & Electrical and Electronic Engineering & Engineering and Technology\\
+\bottomrule
+\end{longtable}
+\endgroup{}
+
+\subsection{1.5 Number of Articles per
+Query}\label{number-of-articles-per-query}
+
+\includegraphics[width=1\linewidth]{02_descriptives_files/figure-latex/articles_per_query-1}
+
+\section{2. Publications over Time}\label{publications-over-time}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/publications over time-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/publications over time-2.pdf}}
+
+\section{3. Domain Overview}\label{domain-overview}
+
+\subsection{3.1 Top Domains}\label{top-domains}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/domains-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/domains-2.pdf}}
+
+\subsection{3.2 Domains over Time}\label{domains-over-time}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/domains over time-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/domains over time-2.pdf}}
+
+\section{4. Field Overview}\label{field-overview}
+
+\subsection{4.1 List of Fields}\label{list-of-fields}
+
+\begin{table}[!h]
+
+\caption{\label{tab:list of fields}List of Fields by OpenAlex.}
+\centering
+\begin{tabular}[t]{l}
+\toprule
+Field\\
+\midrule
+Agricultural and Biological Sciences\\
+Arts and Humanities\\
+Biochemistry, Genetics and Molecular Biology\\
+Business, Management and Accounting\\
+Chemical Engineering\\
+Chemistry\\
+Computer Science\\
+Decision Sciences\\
+Earth and Planetary Sciences\\
+Economics, Econometrics and Finance\\
+Energy\\
+Engineering\\
+Environmental Science\\
+Health Professions\\
+Immunology and Microbiology\\
+Materials Science\\
+Mathematics\\
+Medicine\\
+Neuroscience\\
+Nursing\\
+Pharmacology, Toxicology and Pharmaceutics\\
+Physics and Astronomy\\
+Psychology\\
+Social Sciences\\
+Veterinary\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{4.2 Top Fields}\label{top-fields}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/fields-1.pdf}}
+
+\subsection{4.3 Fields over Time}\label{fields-over-time}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/fields over time-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/fields over time-2.pdf}}
+
+\subsection{4.4 Distribution of Fields across
+Queries}\label{distribution-of-fields-across-queries}
+
+\includegraphics[width=1\linewidth]{02_descriptives_files/figure-latex/query_dist-1}
+
+\subsection{4.5 Distribution of Journals across
+fields}\label{distribution-of-journals-across-fields}
+
+\begin{table}
+
+\caption{\label{tab:journal_field_dist_tbl}Top Journals per Field}
+\centering
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Top Journals per Field (Descending Order)} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Field & Journal 1 & Journal 2 & Journal 3\\
+\midrule
+Agricultural and Biological Sciences & Animal Behaviour (22) & Behavioral Ecology (18) & Journal of Theoretical Biology (14)\\
+Arts and Humanities & Linguistics and Philosophy (5) & Synthese (5) & Erkenntnis (2)\\
+Biochemistry, Genetics and Molecular Biology & Journal of Theoretical Biology (19) & PLoS ONE (11) & Journal of Mathematical Biology (10)\\
+Business, Management and Accounting & Sustainability (126) & European Journal of Operational Research (121) & International Journal of Production Economics (95)\\
+Computer Science & IEEE Access (113) & IEEE Transactions on Wireless Communications (82) & IEEE Transactions on Vehicular Technology (75)\\
+Decision Sciences & Games and Economic Behavior (124) & International Journal of Game Theory (93) & Journal of Economic Theory (87)\\
+Economics, Econometrics and Finance & International Journal of Game Theory (108) & Games and Economic Behavior (65) & European Journal of Operational Research (61)\\
+Energy & Sustainability (10) & Energy Policy (9) & Energy (8)\\
+Engineering & IEEE Access (141) & IEEE Transactions on Vehicular Technology (91) & Energy (84)\\
+Environmental Science & Journal of Cleaner Production (29) & Sustainability (23) & Frontiers in Marine Science (9)\\
+Health Professions & Engineering Construction \& Architectural Management (4) & Frontiers in Public Health (4) & Frontiers in Psychology (3)\\
+Mathematics & Chaos Solitons \& Fractals (7) & Journal of Optimization Theory and Applications (7) & Journal of Intelligent \& Fuzzy Systems (5)\\
+Medicine & Journal of Theoretical Biology (10) & Dynamic Games and Applications (5) & IEEE Transactions on Automatic Control (5)\\
+Physics and Astronomy & Physica A Statistical Mechanics and its Applications (31) & Quantum Information Processing (18) & Complexity (10)\\
+Psychology & Scientific Reports (5) & PLoS ONE (4) & Philosophical Transactions of the Royal Society B Biological Sciences (4)\\
+Social Sciences & Journal of Theoretical Biology (152) & Physica A Statistical Mechanics and its Applications (82) & PLoS ONE (76)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/journal_field_dist_fig-1.pdf}}
+
+\newpage
+
+\subsection{4.6 Top Articles per Field}\label{top-articles-per-field}
+
+\begingroup\fontsize{10}{12}\selectfont
+
+\begin{longtable}[t]{>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}c}
+\caption{\label{tab:top_articles_per_field}Top Articles per Field}\\
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Top Articles per Field (Descending Order)} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Field & Authors & Title & No. Citations\\
+\midrule
+Business, Management and Accounting & Arvind Parkhe & strategic alliance structuring: a game theoretic and transaction cost examination of interfirm cooperation. & 2581\\
+ & Jan W. Rivkin & imitation of complex strategies & 1292\\
+ & Rikard Larsson;Lars Bengtsson;Kristina Henriksson;Judith Sparks & the interorganizational learning dilemma: collective knowledge development in strategic alliances & 1077\\
+Computer Science & Cem Saraydar;Narayan B. Mandayam;D.J. Goodman & efficient power control via pricing in wireless data networks & 1332\\
+ & Wenbo Wang;Dinh Thai Hoang;Peizhao Hu;Zehui Xiong;Dusit Niyato;Ping Wang;Yonggang Wen;Dong In Kim & a survey on consensus mechanisms and mining strategy management in blockchain networks & 940\\
+ & Xu Chen;Xu Chen & decentralized computation offloading game for mobile cloud computing & 843\\
+Decision Sciences & David M. Kreps;Robert Wilson & reputation and imperfect information & 3101\\
+ & Drew Fudenberg;Eric Maskin & the folk theorem in repeated games with discounting or with incomplete information & 2371\\
+ & Paul Milgrom;John Roberts & rationalizability, learning, and equilibrium in games with strategic complementarities & 1816\\
+Economics, Econometrics and Finance & Charles F. Manski & economic analysis of social interactions & 2052\\
+ & Daniel Friedman & evolutionary games in economics & 1797\\
+ & Barry R. Weingast & the political foundations of democracy and the rule of the law & 1739\\
+Engineering & Amir-Hamed Mohsenian-Rad;Vincent W. S. Wong;Juri Jatskevich;Robert Schober;Alberto Leon‐Garcia & autonomous demand-side management based on game-theoretic energy consumption scheduling for the future smart grid & 2711\\
+ & Amitav Mukherjee;S. Ali. A. Fakoorian;Jing Huang;A. Lee Swindlehurst & principles of physical layer security in multiuser wireless networks: a survey & 1427\\
+ & Tamer Başar;P. Bernhard & h/sup ∞/-0ptimal control and related minimax design problems: a dynamic game approach & 1066\\
+Mathematics & Christopher A. Klausmeier;Elena Litchman & algal games: the vertical distribution of phytoplankton in poorly mixed water columns & 294\\
+ & Donald A. Martin & the determinacy of blackwell games & 259\\
+ & Zheng‐Hai Huang;Liqun Qi & formulating an n-person noncooperative game as a tensor complementarity problem & 174\\
+Physics and Astronomy & David Meyer & quantum strategies & 744\\
+ & Ramasuri Narayanam;Y. Narahari & a shapley value-based approach to discover influential nodes in social networks & 373\\
+ & Simon C. Benjamin;Patrick Hayden & multiplayer quantum games & 309\\
+Psychology & Herbert Gintis & a framework for the unification of the behavioral sciences & 411\\
+ & Geoffrey F. Miller;Peter M. Todd & mate choice turns cognitive & 368\\
+ & Calvin B. Harley & learning the evolutionarily stable strategy & 366\\
+Social Sciences & David M. Kreps;Paul Milgrom;John Roberts;Robert Wilson & rational cooperation in the finitely repeated prisoners' dilemma & 2512\\
+ & Hisashi Ohtsuki;Christoph Hauert;E. James Lieberman;Martin A. Nowak & a simple rule for the evolution of cooperation on graphs and social networks & 2155\\
+ & Martin Dufwenberg;Georg Kirchsteiger & a theory of sequential reciprocity & 1902\\
+\bottomrule
+\end{longtable}
+\endgroup{}
+
+\newpage
+
+\section{5. Subfield Overview}\label{subfield-overview}
+
+\subsection{5.1 List of Subfields}\label{list-of-subfields}
+
+\begin{longtable}[t]{|>{}lr>{}r|}
+\caption{\label{tab:list of subfields}List of Subfields by OpenAlex.}\\
+\toprule
+Subfield & No. Publications & No. Citations\\
+\midrule
+Accounting & 75 & 1753\\
+Aerospace Engineering & 301 & 7817\\
+Aging & 3 & 48\\
+Agronomy and Crop Science & 7 & 229\\
+Algebra and Number Theory & 2 & 14\\
+Analytical Chemistry & 1 & 10\\
+Anthropology & 3 & 35\\
+Applied Mathematics & 7 & 140\\
+Applied Microbiology and Biotechnology & 2 & 45\\
+Applied Psychology & 5 & 52\\
+Aquatic Science & 1 & 25\\
+Artificial Intelligence & 485 & 11747\\
+Astronomy and Astrophysics & 11 & 94\\
+Atmospheric Science & 4 & 17\\
+Atomic and Molecular Physics, and Optics & 89 & 2927\\
+Automotive Engineering & 151 & 3546\\
+Biomedical Engineering & 35 & 921\\
+Building and Construction & 123 & 3771\\
+Business and International Management & 21 & 301\\
+Cancer Research & 4 & 171\\
+Cardiology and Cardiovascular Medicine & 2 & 35\\
+Cell Biology & 2 & 57\\
+Cellular and Molecular Neuroscience & 2 & 166\\
+Civil and Structural Engineering & 121 & 4081\\
+Clinical Psychology & 13 & 488\\
+Cognitive Neuroscience & 51 & 2916\\
+Communication & 20 & 369\\
+Complementary and alternative medicine & 1 & 1\\
+Computational Mathematics & 8 & 420\\
+Computational Mechanics & 9 & 184\\
+Computational Theory and Mathematics & 280 & 7707\\
+Computer Graphics and Computer-Aided Design & 1 & 2\\
+Computer Networks and Communications & 1281 & 50657\\
+Computer Science Applications & 58 & 1562\\
+Computer Vision and Pattern Recognition & 84 & 1621\\
+Control and Systems Engineering & 419 & 15993\\
+Cultural Studies & 12 & 592\\
+Demography & 43 & 1544\\
+Development & 28 & 940\\
+Developmental and Educational Psychology & 24 & 1274\\
+Discrete Mathematics and Combinatorics & 3 & 19\\
+Earth-Surface Processes & 20 & 104\\
+Ecological Modeling & 3 & 54\\
+Ecology & 42 & 1383\\
+Ecology, Evolution, Behavior and Systematics & 163 & 13407\\
+Economics and Econometrics & 2350 & 81834\\
+Education & 28 & 487\\
+Electrical and Electronic Engineering & 1512 & 65001\\
+Electronic, Optical and Magnetic Materials & 2 & 34\\
+Emergency Medical Services & 8 & 158\\
+Emergency Medicine & 1 & 50\\
+Endocrinology & 2 & 98\\
+Energy Engineering and Power Technology & 5 & 130\\
+Environmental Chemistry & 3 & 14\\
+Environmental Engineering & 44 & 1424\\
+Epidemiology & 11 & 434\\
+Experimental and Cognitive Psychology & 29 & 1544\\
+Family Practice & 2 & 14\\
+Finance & 250 & 7103\\
+Fluid Flow and Transfer Processes & 1 & 16\\
+Food Science & 29 & 259\\
+Gender Studies & 24 & 1662\\
+General Agricultural and Biological Sciences & 15 & 174\\
+General Decision Sciences & 66 & 3238\\
+General Economics, Econometrics and Finance & 104 & 3318\\
+General Energy & 21 & 526\\
+General Health Professions & 17 & 107\\
+General Psychology & 1 & 224\\
+Genetics & 159 & 7721\\
+Geography, Planning and Development & 2 & 4\\
+Geometry and Topology & 16 & 362\\
+Global and Planetary Change & 132 & 3856\\
+Hardware and Architecture & 10 & 198\\
+Health & 5 & 36\\
+Health Informatics & 1 & 41\\
+Health Information Management & 3 & 15\\
+Health, Toxicology and Mutagenesis & 8 & 88\\
+Hepatology & 1 & 9\\
+History & 2 & 111\\
+History and Philosophy of Science & 8 & 339\\
+Human-Computer Interaction & 4 & 303\\
+Immunology & 5 & 54\\
+Industrial and Manufacturing Engineering & 186 & 5369\\
+Infectious Diseases & 12 & 240\\
+Information Systems & 381 & 11816\\
+Information Systems and Management & 9 & 155\\
+Insect Science & 1 & 16\\
+Instrumentation & 2 & 34\\
+Language and Linguistics & 11 & 186\\
+Law & 11 & 755\\
+Linguistics and Language & 3 & 166\\
+Literature and Literary Theory & 3 & 26\\
+Management Information Systems & 705 & 22133\\
+Management Science and Operations Research & 1879 & 77654\\
+Management of Technology and Innovation & 64 & 1601\\
+Management, Monitoring, Policy and Law & 66 & 977\\
+Marketing & 429 & 18120\\
+Materials Chemistry & 3 & 363\\
+Mathematical Physics & 8 & 125\\
+Mechanical Engineering & 26 & 424\\
+Mechanics of Materials & 11 & 247\\
+Media Technology & 43 & 828\\
+Microbiology & 1 & 5\\
+Modeling and Simulation & 112 & 2972\\
+Molecular Biology & 36 & 884\\
+Museology & 2 & 2\\
+Music & 1 & 3\\
+Nature and Landscape Conservation & 24 & 1855\\
+Neurology & 6 & 63\\
+Nuclear and High Energy Physics & 2 & 14\\
+Numerical Analysis & 12 & 156\\
+Nutrition and Dietetics & 1 & 0\\
+Ocean Engineering & 223 & 6194\\
+Oceanography & 3 & 144\\
+Oncology & 2 & 28\\
+Organizational Behavior and Human Resource Management & 47 & 1349\\
+Orthopedics and Sports Medicine & 3 & 193\\
+Paleontology & 1 & 32\\
+Parasitology & 1 & 40\\
+Pediatrics, Perinatology and Child Health & 2 & 43\\
+Pharmacology & 6 & 105\\
+Pharmacy & 7 & 65\\
+Philosophy & 29 & 181\\
+Physical Therapy, Sports Therapy and Rehabilitation & 1 & 0\\
+Physiology & 3 & 16\\
+Plant Science & 24 & 718\\
+Political Science and International Relations & 183 & 11694\\
+Pollution & 27 & 658\\
+Polymers and Plastics & 1 & 85\\
+Psychiatry and Mental health & 3 & 15\\
+Public Administration & 13 & 98\\
+Public Health, Environmental and Occupational Health & 102 & 3345\\
+Pulmonary and Respiratory Medicine & 7 & 253\\
+Radiological and Ultrasound Technology & 29 & 651\\
+Radiology, Nuclear Medicine and Imaging & 3 & 58\\
+Renewable Energy, Sustainability and the Environment & 74 & 2654\\
+Safety Research & 598 & 35862\\
+Safety, Risk, Reliability and Quality & 45 & 1449\\
+Sensory Systems & 1 & 16\\
+Signal Processing & 24 & 439\\
+Small Animals & 3 & 54\\
+Social Psychology & 44 & 2326\\
+Sociology and Political Science & 1803 & 77616\\
+Software & 3 & 34\\
+Soil Science & 31 & 2164\\
+Spectroscopy & 2 & 9\\
+Statistical and Nonlinear Physics & 251 & 6656\\
+Statistics and Probability & 38 & 619\\
+Statistics, Probability and Uncertainty & 27 & 687\\
+Strategy and Management & 940 & 35887\\
+Surgery & 1 & 6\\
+Theoretical Computer Science & 1 & 0\\
+Tourism, Leisure and Hospitality Management & 3 & 37\\
+Transportation & 134 & 4854\\
+Urban Studies & 11 & 187\\
+Virology & 3 & 260\\
+Visual Arts and Performing Arts & 6 & 275\\
+Water Science and Technology & 23 & 467\\
+\bottomrule
+\end{longtable}
+
+\subsection{5.2 Top Subfields}\label{top-subfields}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/subfields-1.pdf}}
+
+\subsection{5.3 Subfields over Time}\label{subfields-over-time}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/subfields over time-1.pdf}}
+
+\subsection{5.4 Distribution of Journals across
+Subfields}\label{distribution-of-journals-across-subfields}
+
+\begingroup\fontsize{10}{12}\selectfont
+
+\begin{longtable}[t]{>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}}
+\caption{\label{tab:journal_subfield_dist_tbl}Top Journals per Subfield}\\
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Top Journals per Subfield (Descending Order)} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Subield & Journal 1 & Journal 2 & Journal 3\\
+\midrule
+Aerospace Engineering & IEEE Access (24) & IEEE Transactions on Aerospace and Electronic Systems (17) & Journal of Guidance Control and Dynamics (16)\\
+Artificial Intelligence & IEEE Access (17) & Theoretical Computer Science (12) & Artificial Intelligence (11)\\
+Atomic and Molecular Physics, and Optics & Quantum Information Processing (18) & Physica A Statistical Mechanics and its Applications (13) & Physics Letters A (6)\\
+Automotive Engineering & IEEE Transactions on Intelligent Transportation Systems (10) & Transportation Research Part C Emerging Technologies (10) & IEEE Transactions on Vehicular Technology (8)\\
+Building and Construction & Sustainability (19) & Journal of Cleaner Production (13) & Building and Environment (7)\\
+Civil and Structural Engineering & Reliability Engineering \& System Safety (17) & European Journal of Operational Research (12) & Risk Analysis (12)\\
+Computational Theory and Mathematics & Theoretical Computer Science (11) & Optimization (10) & IEEE Transactions on Cybernetics (8)\\
+Computer Networks and Communications & IEEE Transactions on Wireless Communications (80) & IEEE Transactions on Vehicular Technology (66) & IEEE Access (56)\\
+Control and Systems Engineering & IEEE Transactions on Automatic Control (23) & IEEE Transactions on Intelligent Transportation Systems (18) & Automatica (11)\\
+Ecology, Evolution, Behavior and Systematics & Animal Behaviour (22) & Behavioral Ecology (18) & Journal of Theoretical Biology (14)\\
+Economics and Econometrics & International Journal of Game Theory (107) & Games and Economic Behavior (63) & Journal of Economic Theory (56)\\
+Electrical and Electronic Engineering & IEEE Access (86) & Energy (75) & Applied Energy (65)\\
+Finance & SIAM Journal on Control and Optimization (9) & Dynamic Games and Applications (7) & Insurance Mathematics and Economics (7)\\
+Genetics & Journal of Theoretical Biology (17) & Journal of Mathematical Biology (10) & The American Naturalist (10)\\
+Global and Planetary Change & Sustainability (7) & Environmental and Resource Economics (6) & Fisheries Research (6)\\
+Industrial and Manufacturing Engineering & Journal of Cleaner Production (12) & Sustainability (12) & Maritime Policy \& Management (8)\\
+Information Systems & IEEE Access (27) & Mathematics (15) & Future Generation Computer Systems (14)\\
+Management Information Systems & European Journal of Operational Research (64) & International Journal of Production Economics (46) & Computers \& Industrial Engineering (31)\\
+Management Science and Operations Research & Games and Economic Behavior (123) & International Journal of Game Theory (91) & Journal of Economic Theory (84)\\
+Marketing & Marketing Science (32) & Management Science (18) & Sustainability (18)\\
+Modeling and Simulation & Chaos Solitons \& Fractals (7) & Journal of Theoretical Biology (5) & Scientific Reports (4)\\
+Ocean Engineering & Water Resources Management (25) & Water (12) & Sustainability (9)\\
+Political Science and International Relations & Journal of Theoretical Politics (12) & American Political Science Review (8) & American Journal of Political Science (6)\\
+Public Health, Environmental and Occupational Health & Dynamic Games and Applications (5) & IEEE Transactions on Automatic Control (5) & Journal of Biological Dynamics (4)\\
+Safety Research & Games and Economic Behavior (36) & Journal of Economic Behavior \& Organization (35) & Experimental Economics (23)\\
+Sociology and Political Science & Journal of Theoretical Biology (145) & Physica A Statistical Mechanics and its Applications (77) & Applied Mathematics and Computation (68)\\
+Statistical and Nonlinear Physics & Physica A Statistical Mechanics and its Applications (18) & Complexity (10) & Automation and Remote Control (8)\\
+Strategy and Management & Sustainability (77) & Journal of Cleaner Production (46) & Computers \& Industrial Engineering (40)\\
+Transportation & Transportation Research Part B Methodological (17) & Sustainability (7) & European Journal of Operational Research (6)\\
+\bottomrule
+\end{longtable}
+\endgroup{}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/journal_subfield_dist_fig-1.pdf}}
+
+\newpage
+
+\subsection{5.5 Top Articles per
+Subfield}\label{top-articles-per-subfield}
+
+\begingroup\fontsize{10}{12}\selectfont
+
+\begin{longtable}[t]{|>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{}c|}
+\caption{\label{tab:top_articles_per_subfield}Top Articles per subfield}\\
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Top Articles per Subfield (Descending Order)} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Subfield & Authors & Title & No. Citations\\
+\midrule
+Aerospace Engineering & Jingjing Cui;Yuanwei Liu;Arumugam Nallanathan & multi-agent reinforcement learning-based resource allocation for uav networks & 498\\
+ & Liang Xiao;Xiaozhen Lu;Dongjin Xu;Yuliang Tang;Lei Wang;Weihua Zhuang & uav relay in vanets against smart jamming with reinforcement learning & 292\\
+ & Xiufeng Song;Peter Willett;Shengli Zhou;Peter B. Luh & the mimo radar and jammer games & 183\\
+Artificial Intelligence & Marc Pauly & a modal logic for coalitional power in games & 466\\
+ & David Poole & the independent choice logic for modelling multiple agents under uncertainty & 383\\
+ & Zhipeng Cai;Zuobin Xiong;Honghui Xu;Peng Wang;Wei Li;Yi Pan & generative adversarial networks & 325\\
+Automotive Engineering & Adam Millard‐Ball & pedestrians, autonomous vehicles, and cities & 291\\
+ & Xiaoxiang Na;David J. Cole & game-theoretic modeling of the steering interaction between a human driver and a vehicle collision avoidance controller & 188\\
+ & Zhu Xiao;Xingxia Dai;Hongbo Jiang;Dong Wang;Hongyang Chen;Liang Yang;Fanzi Zeng & vehicular task offloading via heat-aware mec cooperation using game-theoretic method & 168\\
+Building and Construction & Lei Du;Yingbin Feng;Wei Lu;Lingkai Kong;Zhi Yang & evolutionary game analysis of stakeholders' decision-making behaviours in construction and demolition waste management & 148\\
+ & Qinghua He;Zilun Wang;Ge Wang;Jian Zuo;Guangdong Wu;Bingsheng Liu & to be green or not to be: how environmental regulations shape contractor greenwashing behaviors in construction projects & 131\\
+ & Ke Fan;Eddie C.M. Hui & evolutionary game theory analysis for understanding the decision-making mechanisms of governments and developers on green building incentives & 126\\
+Civil and Structural Engineering & Jun Zhuang;Vicki M. Bier;Oğuzhan Alagöz & modeling secrecy and deception in a multiple-period attacker–defender signaling game & 268\\
+ & Vicki M. Bier;Aniruddha Nagaraj;Vinod Abhichandani & protection of simple series and parallel systems with components of different values & 204\\
+ & Louis Anthony Cox & game theory and risk analysis & 162\\
+Computational Theory and Mathematics & Anne Condon & the complexity of stochastic games & 501\\
+ & Sjur Didrik Flåm;А. С. Антипин & equilibrium programming using proximal-like algorithms & 437\\
+ & James T. Moore;Jonathan F. Bard & the mixed integer linear bilevel programming problem & 343\\
+Computer Networks and Communications & Cem Saraydar;Narayan B. Mandayam;D.J. Goodman & efficient power control via pricing in wireless data networks & 1332\\
+ & Xu Chen;Xu Chen & decentralized computation offloading game for mobile cloud computing & 843\\
+ & Yunan Gu;Walid Saad;Mehdi Bennis;Mérouane Debbah;Zhu Han & matching theory for future wireless networks: fundamentals and applications & 567\\
+Control and Systems Engineering & Tamer Başar;P. Bernhard & h/sup ∞/-0ptimal control and related minimax design problems: a dynamic game approach & 1066\\
+ & Yang Han;Ke Zhang;Hong Li;E.A.A. Coelho;Josep M. Guerrero & mas-based distributed coordinated control and optimization in microgrid and microgrid clusters: a comprehensive overview & 455\\
+ & Hao Wang;Jianwei Huang;Hao Wang;Jianwei Huang & incentivizing energy trading for interconnected microgrids & 447\\
+Ecology, Evolution, Behavior and Systematics & Mart R. Gross & alternative reproductive strategies and tactics: diversity within sexes & 1681\\
+ & Hanna Kokko & competition for early arrival in migratory birds & 812\\
+ & Gareth Arnott;Robert W. Elwood & assessment of fighting ability in animal contests & 711\\
+Economics and Econometrics & Charles F. Manski & economic analysis of social interactions & 2052\\
+ & Daniel Friedman & evolutionary games in economics & 1797\\
+ & Barry R. Weingast & the political foundations of democracy and the rule of the law & 1739\\
+Electrical and Electronic Engineering & Amir-Hamed Mohsenian-Rad;Vincent W. S. Wong;Juri Jatskevich;Robert Schober;Alberto Leon‐Garcia & autonomous demand-side management based on game-theoretic energy consumption scheduling for the future smart grid & 2711\\
+ & Amitav Mukherjee;S. Ali. A. Fakoorian;Jing Huang;A. Lee Swindlehurst & principles of physical layer security in multiuser wireless networks: a survey & 1427\\
+ & Zhongjing Ma;Duncan S. Callaway;Ian A. Hiskens & decentralized charging control of large populations of plug-in electric vehicles & 963\\
+Finance & Tomas Björk;Agatha Murgoci;Xun Yu Zhou & mean–variance portfolio optimization with state‐dependent risk aversion & 508\\
+ & Hua Fan;Suresh Sundaresan & debt valuation, renegotiation, and optimal dividend policy & 444\\
+ & Han Smit;L. A. Ankum & a real options and game-theoretic approach to corporate investment strategy under competition & 273\\
+General Decision Sciences & Colin F. Camerer;Teck‐Hua Ho & violations of the betweenness axiom and nonlinearity in probability & 740\\
+ & Colin F. Camerer;George Loewenstein;Dražen Prelec & neuroeconomics: how neuroscience can inform economics & 303\\
+ & Teck‐Hua Ho;Noah Lim;Colin F. Camerer & modeling the psychology of consumer and firm behavior with behavioral economics & 262\\
+General Economics, Econometrics and Finance & William A. Bomberger;Thomas J. Sargent & the conquest of american inflation & 673\\
+ & Thad Dunning & resource dependence, economic performance, and political stability & 265\\
+ & Francisco J. Ruge-Murciá & inflation targeting under asymmetric preferences & 163\\
+Genetics & Martin A. Nowak;Karl Sigmund & evolutionary dynamics of biological games & 1140\\
+ & Paul E. Turner;Lin Chao & prisoner's dilemma in an rna virus & 659\\
+ & Hans J. Bremermann;John Pickering & a game-theoretical model of parasite virulence & 387\\
+Global and Planetary Change & Oskar Franklin;Jacob Johansson;Roderick C. Dewar;Ulf Dieckmann;R. E. McMurtrie;Åke Brännström;Ray Dybzinski & modeling carbon allocation in trees: a search for principles & 291\\
+ & Jiaqi Peng;Jianmin Zhang & urban flooding risk assessment based on gis- game theory combination weight: a case study of zhengzhou city & 169\\
+ & Scott Barrett;Astrid Dannenberg & sensitivity of collective action to uncertainty about climate tipping points & 168\\
+Industrial and Manufacturing Engineering & Yuandou Wang;Hang Liu;Wanbo Zheng;Yunni Xia;Yawen Li;Peng Chen;Kunyin Guo;Hong Xie & multi-objective workflow scheduling with deep-q-network-based multi-agent reinforcement learning & 271\\
+ & Masahiro Ishii;Paul Tae‐Woo Lee;Koichiro Tezuka;Young-Tae Chang & a game theoretical analysis of port competition & 189\\
+ & Yong Wang;Xiaolei Ma;Zhibin Li;Yong Liu;Maozeng Xu;Yinhai Wang & profit distribution in collaborative multiple centers vehicle routing problem & 172\\
+Information Systems & Wenbo Wang;Dinh Thai Hoang;Peizhao Hu;Zehui Xiong;Dusit Niyato;Ping Wang;Yonggang Wen;Dong In Kim & a survey on consensus mechanisms and mining strategy management in blockchain networks & 940\\
+ & David Easley;Maureen O’Hara;Soumya Basu & from mining to markets: the evolution of bitcoin transaction fees & 547\\
+ & Kong-wei Lye;Jeannette M. Wing & game strategies in network security & 433\\
+Management Information Systems & Mahesh Nagarajan;Greys Sošić & game-theoretic analysis of cooperation among supply chain agents: review and extensions & 607\\
+ & Jan A. Van Mieghem & coordinating investment, production, and subcontracting & 361\\
+ & Gary H. Chao;Seyed M. R. Iravani;R. Canan Savaskan & quality improvement incentives and product recall cost sharing contracts & 358\\
+Management Science and Operations Research & David M. Kreps;Robert Wilson & reputation and imperfect information & 3101\\
+ & Drew Fudenberg;Eric Maskin & the folk theorem in repeated games with discounting or with incomplete information & 2371\\
+ & Paul Milgrom;John Roberts & rationalizability, learning, and equilibrium in games with strategic complementarities & 1816\\
+Marketing & Patrick Bajari;C. Lanier Benkard;Jonathan Levin & estimating dynamic models of imperfect competition & 869\\
+ & Marcel Corstjens;Rajiv Lal & building store loyalty through store brands & 667\\
+ & Michael J. Mazzeo & product choice and oligopoly market structure & 634\\
+Modeling and Simulation & Christopher A. Klausmeier;Elena Litchman & algal games: the vertical distribution of phytoplankton in poorly mixed water columns & 294\\
+ & Sheryl L. Chang;Mahendra Piraveenan;Philippa Pattison;Mikhail Prokopenko & game theoretic modelling of infectious disease dynamics and intervention methods: a review & 159\\
+ & Timothy C. Reluga;Alison P. Galvani & a general approach for population games with application to vaccination & 127\\
+Ocean Engineering & Kaveh Madani;Jay R. Lund & a monte-carlo game theoretic approach for multi-criteria decision making under uncertainty & 188\\
+ & Kaveh Madani;Keith W. Hipel & non-cooperative stability definitions for strategic analysis of generic water resources conflicts & 148\\
+ & Lu Xiao;Jianyue Liu;Jinwen Ge & dynamic game in agriculture and industry cross-sectoral water pollution governance in developing countries & 144\\
+Political Science and International Relations & Alberto Alesina & credibility and policy convergence in a two-party system with rational voters & 823\\
+ & Wolfgang Mayer & endogenous tariff formation. & 666\\
+ & Vivien A. Schmidt;Claudio M. Radaelli & policy change and discourse in europe: conceptual and methodological issues & 605\\
+Public Health, Environmental and Occupational Health & Gerry Mackie & ending footbinding and infibulation: a convention account & 765\\
+ & Don M. Hugie;Lawrence M. Dill & fish and game: a game theoretic approach to habitat selection by predators and prey* & 260\\
+ & Arja Kaitala;Veijo Kaitala;Per Lundberg & a theory of partial migration & 172\\
+Safety Research & David M. Kreps;Paul Milgrom;John Roberts;Robert Wilson & rational cooperation in the finitely repeated prisoners' dilemma & 2512\\
+ & Martin Dufwenberg;Georg Kirchsteiger & a theory of sequential reciprocity & 1902\\
+ & Ido Erev;Alvin E. Roth & predicting how people play games: reinforcement learning in experimental games with unique, mixed strategy equilibria & 1822\\
+Sociology and Political Science & Hisashi Ohtsuki;Christoph Hauert;E. James Lieberman;Martin A. Nowak & a simple rule for the evolution of cooperation on graphs and social networks & 2155\\
+ & Martin A. Nowak;Akira Sasaki;Christine Taylor;Drew Fudenberg & emergence of cooperation and evolutionary stability in finite populations & 1378\\
+ & Sasha R. X. Dall;Alasdair I. Houston;John M. McNamara & the behavioural ecology of personality: consistent individual differences from an adaptive perspective & 1279\\
+Statistical and Nonlinear Physics & Ramasuri Narayanam;Y. Narahari & a shapley value-based approach to discover influential nodes in social networks & 373\\
+ & Wei Chen;Zhenming Liu;Xiaorui Sun;Yajun Wang & a game-theoretic framework to identify overlapping communities in social networks & 217\\
+ & S. Rasoul Etesami;Tamer Başar & game-theoretic analysis of the hegselmann-krause model for opinion dynamics in finite dimensions & 176\\
+Strategy and Management & Arvind Parkhe & strategic alliance structuring: a game theoretic and transaction cost examination of interfirm cooperation. & 2581\\
+ & Jan W. Rivkin & imitation of complex strategies & 1292\\
+ & Rikard Larsson;Lars Bengtsson;Kristina Henriksson;Judith Sparks & the interorganizational learning dilemma: collective knowledge development in strategic alliances & 1077\\
+Transportation & José Correa;Andreas S. Schulz;Nicolás E. Stier‐Moses & selfish routing in capacitated networks & 386\\
+ & Michael G.H. Bell & a game theory approach to measuring the performance reliability of transport networks & 379\\
+ & Alain Haurie;Patrice Marcotte & on the relationship between nash—cournot and wardrop equilibria & 327\\
+\bottomrule
+\end{longtable}
+\endgroup{}
+
+\newpage
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/subfields over time cont-1.pdf}}
+
+\newpage
+
+\section{6. Discipline Overview}\label{discipline-overview}
+
+\subsection{6.1 List of Disciplines}\label{list-of-disciplines}
+
+\begin{table}[!h]
+
+\caption{\label{tab:list of discplines}List of Disciplines}
+\centering
+\begin{tabular}[t]{|>{}lr>{}r|}
+\toprule
+Discipline & No. Publications & No. Citations\\
+\midrule
+Arts & 7 & 56\\
+Biology & 383 & 22338\\
+Biomedical Research & 998 & 51021\\
+Chemistry & 8 & 452\\
+Computer Science & 2315 & 61960\\
+Economics & 2833 & 148510\\
+Engineering and Technology & 3696 & 139995\\
+Geoscience & 1027 & 26311\\
+Health & 65 & 802\\
+Humanities & 114 & 2607\\
+Law & 47 & 1358\\
+Management & 1666 & 71784\\
+Mathematics & 1650 & 31491\\
+Medicine & 145 & 4924\\
+Operations Research & 634 & 14327\\
+Other Professional Fields & 245 & 7754\\
+Other Social Sciences & 315 & 8577\\
+Physics & 805 & 24603\\
+Political Science & 437 & 26655\\
+Psychology & 263 & 16448\\
+Sociology & 90 & 4054\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{6.2 Top Disciplines}\label{top-disciplines}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/disciplines-1.pdf}}
+
+\subsection{6.3 Disciplines over Time}\label{disciplines-over-time}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/disciplines over time-1.pdf}}
+
+\subsection{6.4 Distribution of Journals across
+Disciplines}\label{distribution-of-journals-across-disciplines}
+
+\begingroup\fontsize{10}{12}\selectfont
+
+\begin{longtable}[t]{>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}}
+\caption{\label{tab:journal_discipline_dist_tbl}Top Journals per Discipline}\\
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Top Journals per discipline (Descending Order)} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Discipline & Journal 1 & Journal 2 & Journal 3\\
+\midrule
+Biology & The American Naturalist (42) & Behavioral Ecology (31) & Ecological Modelling (20)\\
+Biomedical Research & Journal of Theoretical Biology (210) & PLoS ONE (208) & Scientific Reports (121)\\
+Computer Science & IEEE Access (346) & Computers \& Industrial Engineering (140) & Kybernetes (87)\\
+Economics & Games and Economic Behavior (241) & International Journal of Game Theory (228) & Journal of Economic Theory (163)\\
+Engineering and Technology & IEEE Transactions on Vehicular Technology (169) & IEEE Transactions on Wireless Communications (148) & Energy (118)\\
+Geoscience & Sustainability (360) & Journal of Cleaner Production (193) & International Journal of Environmental Research and Public Health (84)\\
+Health & Frontiers in Public Health (34) & BMC Geriatrics (3) & Health Economics (3)\\
+Humanities & Erkenntnis (15) & Journal of Logic Language and Information (8) & Linguistics and Philosophy (8)\\
+Law & European Journal of Law and Economics (13) & Marine Policy (12) & International Environmental Agreements Politics Law and Economics (4)\\
+Management & European Journal of Operational Research (275) & Management Science (113) & Managerial and Decision Economics (83)\\
+Mathematics & Mathematics (141) & Complexity (118) & Mathematical Problems in Engineering (116)\\
+Medicine & Neurocomputing (21) & Frontiers in Neuroscience (4) & IEEE Transactions on Medical Imaging (4)\\
+Operations Research & Annals of Operations Research (169) & Transportation Research Part B Methodological (52) & Journal of Industrial and Management Optimization (51)\\
+Other Professional Fields & Transportation Research Part E Logistics and Transportation Review (67) & Transportation Research Part C Emerging Technologies (26) & Transportation Research Part A Policy and Practice (18)\\
+Other Social Sciences & Synthese (33) & Risk Analysis (25) & Resources Policy (16)\\
+Physics & Physica A Statistical Mechanics and its Applications (151) & Chaos Solitons \& Fractals (92) & Physical Review E (50)\\
+Political Science & Journal of Theoretical Politics (48) & Journal of Conflict Resolution (42) & European Journal of Political Economy (31)\\
+Psychology & Animal Behaviour (49) & Frontiers in Psychology (25) & Behavioral Ecology and Sociobiology (17)\\
+Sociology & Rationality and Society (48) & Journal of Mathematical Sociology (10) & Social Networks (5)\\
+\bottomrule
+\end{longtable}
+\endgroup{}
+
+\newpage
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/journal_discipline_dist_fig-1.pdf}}
+
+\newpage
+
+\subsection{6.5 Top Articles per
+Discipline}\label{top-articles-per-discipline}
+
+\begingroup\fontsize{10}{12}\selectfont
+
+\begin{longtable}[t]{|>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}>{}c|}
+\caption{\label{tab:top_articles_per_discipline}Top Articles per Discipline}\\
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Top Articles per Discipline (Descending Order)} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Discipline & Authors & Title & No. Citations\\
+\midrule
+Arts & Y.G. Li;Ruiyuan Cong;Keyong Zhang;Shenglin Ma;Chunli Fu & four-way game analysis of transformation and upgrading of manufacturing enterprises relying on industrial internet platform under developers’ participation & 17\\
+ & Clément L. Canonne & focal points in collective free improvisation & 14\\
+ & Shaowen Wang;Xiaojun Liu & development of epc model in chinese public projects: evolutionary game among stakeholders & 13\\
+Biology & Mart R. Gross & alternative reproductive strategies and tactics: diversity within sexes & 1681\\
+ & Sasha R. X. Dall;Alasdair I. Houston;John M. McNamara & the behavioural ecology of personality: consistent individual differences from an adaptive perspective & 1279\\
+ & Michael Doebeli;Christoph Hauert & models of cooperation based on the prisoner's dilemma and the snowdrift game & 861\\
+Biomedical Research & Hisashi Ohtsuki;Christoph Hauert;E. James Lieberman;Martin A. Nowak & a simple rule for the evolution of cooperation on graphs and social networks & 2155\\
+ & Martin A. Nowak;Akira Sasaki;Christine Taylor;Drew Fudenberg & emergence of cooperation and evolutionary stability in finite populations & 1378\\
+ & Matjaž Perc;Jesus Gomez- Gardenes;Attila Szolnoki;Luis M. Floria;Yamir Moreno & evolutionary dynamics of group interactions on structured populations: a review & 1247\\
+Chemistry & Han‐Yue Zhang;Yuan‐Yuan Tang;Ping‐Ping Shi;Ren‐Gen Xiong & toward the targeted design of molecular ferroelectrics: modifying molecular symmetries and homochirality & 363\\
+ & Suzanne R. McAnanama-Brereton;Mark P. Waller & rational density functional selection using game theory & 27\\
+ & Arthur Cartel Foahom Gouabou;Jules Collenne;Jilliana Monnier;Rabah Iguernaissi;Jean-Luc Damoiseaux;Abdellatif Moudafi;Djamal Merad & computer aided diagnosis of melanoma using deep neural networks and game theory: application on dermoscopic images of skin lesions & 21\\
+Computer Science & Wenbo Wang;Dinh Thai Hoang;Peizhao Hu;Zehui Xiong;Dusit Niyato;Ping Wang;Yonggang Wen;Dong In Kim & a survey on consensus mechanisms and mining strategy management in blockchain networks & 940\\
+ & Constantinos Daskalakis;Paul W. Goldberg;Christos H. Papadimitriou & the complexity of computing a nash equilibrium & 921\\
+ & Xu Chen;Xu Chen & decentralized computation offloading game for mobile cloud computing & 843\\
+Economics & David M. Kreps;Robert Wilson & reputation and imperfect information & 3101\\
+ & David M. Kreps;Paul Milgrom;John Roberts;Robert Wilson & rational cooperation in the finitely repeated prisoners' dilemma & 2512\\
+ & Drew Fudenberg;Eric Maskin & the folk theorem in repeated games with discounting or with incomplete information & 2371\\
+Engineering and Technology & Amir-Hamed Mohsenian-Rad;Vincent W. S. Wong;Juri Jatskevich;Robert Schober;Alberto Leon‐Garcia & autonomous demand-side management based on game-theoretic energy consumption scheduling for the future smart grid & 2711\\
+ & Amitav Mukherjee;S. Ali. A. Fakoorian;Jing Huang;A. Lee Swindlehurst & principles of physical layer security in multiuser wireless networks: a survey & 1427\\
+ & Cem Saraydar;Narayan B. Mandayam;D.J. Goodman & efficient power control via pricing in wireless data networks & 1332\\
+Geoscience & Wanting Chen;Zhi‐Hua Hu & using evolutionary game theory to study governments and manufacturers’ behavioral strategies under various carbon taxes and subsidies & 371\\
+ & Juhong Gao;Hongshuai Han;Liting Hou;Haiyan Wang & pricing and effort decisions in a closed-loop supply chain under different channel power structures & 314\\
+ & Christopher A. Klausmeier;Elena Litchman & algal games: the vertical distribution of phytoplankton in poorly mixed water columns & 294\\
+Health & Amori Yee Mikami;Margaret A. Boucher;Keith Humphreys & prevention of peer rejection through a classroom-level intervention in middle school & 84\\
+ & Kris De Jaegher;Marc Jegers & the physician–patient relationship as a game of strategic information transmission & 66\\
+ & Bradley Chen;Victoria Y. Fan & strategic provider behavior under global budget payment with price adjustment in taiwan & 58\\
+Humanities & Bryce Huebner & norms in the wild: how to diagnose, measure, and change social norms & 225\\
+ & Robert van Rooy & signalling games select horn strategies & 183\\
+ & Mark G. Chen & communication, coordination, and camaraderie in world of warcraft & 164\\
+Law & John T. Scholz & cooperation, deterrence, and the ecology of regulatory enforcement & 270\\
+ & Jack Knight;Lee Epstein & on the struggle for judicial supremacy & 158\\
+ & U. Rashid Sumaila & a review of game-theoretic models of fishing & 113\\
+Management & Arvind Parkhe & strategic alliance structuring: a game theoretic and transaction cost examination of interfirm cooperation. & 2581\\
+ & Jan W. Rivkin & imitation of complex strategies & 1292\\
+ & Rikard Larsson;Lars Bengtsson;Kristina Henriksson;Judith Sparks & the interorganizational learning dilemma: collective knowledge development in strategic alliances & 1077\\
+Mathematics & Alvin E. Roth & the economics of matching: stability and incentives & 895\\
+ & Xiaotie Deng;Christos H. Papadimitriou & on the complexity of cooperative solution concepts & 613\\
+ & Paul Milgrom;Robert J. Weber & distributional strategies for games with incomplete information & 568\\
+Medicine & Dominic J. Barraclough;Michelle Conroy;Daeyeol Lee & prefrontal cortex and decision making in a mixed-strategy game & 696\\
+ & Michael C. Dorris;Paul W. Glimcher & activity in posterior parietal cortex is correlated with the relative subjective desirability of action & 426\\
+ & Daeyeol Lee & game theory and neural basis of social decision making & 304\\
+Operations Research & Jun Zhuang;Vicki M. Bier & balancing terrorism and natural disasters—defensive strategy with endogenous attacker effort & 422\\
+ & Michael G.H. Bell & a game theory approach to measuring the performance reliability of transport networks & 379\\
+ & James T. Moore;Jonathan F. Bard & the mixed integer linear bilevel programming problem & 343\\
+Other Professional Fields & Huseyin Cavusoglu;Srinivasan Raghunathan;Wei Thoo Yue & decision-theoretic and game-theoretic approaches to it security investment & 225\\
+ & Xu Chen;Xiaojun Wang;Hing Kai Chan & manufacturer and retailer coordination for environmental and economic competitiveness: a power perspective & 206\\
+ & Masahiro Ishii;Paul Tae‐Woo Lee;Koichiro Tezuka;Young-Tae Chang & a game theoretical analysis of port competition & 189\\
+Other Social Sciences & Adam Millard‐Ball & pedestrians, autonomous vehicles, and cities & 291\\
+ & Magnus Enquist;Kimmo Eriksson;Stefano Ghirlanda & critical social learning: a solution to rogers's paradox of nonadaptive culture & 244\\
+ & Eddie C.M. Hui;Haijun Bao & the logic behind conflicts in land acquisitions in contemporary china: a framework based upon game theory & 242\\
+Physics & David Meyer & quantum strategies & 744\\
+ & Zhen Wang;Lin Wang;Attila Szolnoki;Matjaž Perc;Zhen Wang;Lin Wang;Attila Szolnoki;Matjaž Perc & evolutionary games on multilayer networks: a colloquium & 703\\
+ & Christoph Hauert;György Szabó & game theory and physics & 490\\
+Political Science & Barry R. Weingast & the political foundations of democracy and the rule of the law & 1739\\
+ & John H. Aldrich & rational choice and turnout & 1210\\
+ & David Austen‐Smith;Jeffrey S. Banks & elections, coalitions, and legislative outcomes & 752\\
+Psychology & Linda Mealey & the sociobiology of sociopathy: an integrated evolutionary model & 984\\
+ & Ronald No�;Peter Hammerstein & biological markets: supply and demand determine the effect of partner choice in cooperation, mutualism and mating & 882\\
+ & Gareth Arnott;Robert W. Elwood & assessment of fighting ability in animal contests & 711\\
+Sociology & Gerry Mackie & ending footbinding and infibulation: a convention account & 765\\
+ & Junfu Zhang & a dynamic model of residential segregation & 229\\
+ & Michael W. Macy & learning to cooperate: stochastic and tacit collusion in social exchange & 218\\
+\bottomrule
+\end{longtable}
+\endgroup{}
+
+\newpage
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/disciplines over time cont-1.pdf}}
+
+\newpage
+
+\subsection{6.6 Discipline Composition of Field (by
+OA)}\label{discipline-composition-of-field-by-oa}
+
+\includegraphics[width=1\linewidth]{02_descriptives_files/figure-latex/field composition by discipline-1}
+
+\newpage
+
+\subsection{6.7 Field Composition (by OA) of
+Disciplines}\label{field-composition-by-oa-of-disciplines}
+
+\includegraphics[width=1\linewidth]{02_descriptives_files/figure-latex/discipline composition by field-1}
+
+\section{7. Authors Overview}\label{authors-overview}
+
+\subsection{7.1 Top Authors}\label{top-authors}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/authors-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/authors-2.pdf}}
+
+\subsection{7.2 Top Authors per Domain}\label{top-authors-per-domain}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per domain}Top Authors in Terms of Citations per Domain}
+\centering
+\resizebox{\linewidth}{!}{
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+Health Sciences & Life Sciences & Physical Sciences & Social Sciences\\
+\midrule
+Gerry Mackie (765) & Mart R. Gross (1681) & Dusit Niyato (5662) & Martin A. Nowak (10999)\\
+Don M. Hugie (260) & Joel S. Brown (1384) & Zhu Han (4031) & Matjaž Perc (7279)\\
+Lawrence M. Dill (260) & Hanna Kokko (1265) & Tamer Başar (3647) & David M. Kreps (5769)\\
+Alison P. Galvani (245) & Rufus A. Johnstone (1262) & H. Vincent Poor (3560) & Drew Fudenberg (5712)\\
+Eunha Shim (245) & Karl Sigmund (1194) & Gesualdo Scutari (3497) & Robert Wilson (5687)\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per domain}Top Authors in Terms of Publications per Domain}
+\centering
+\resizebox{\linewidth}{!}{
+\fontsize{10}{12}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+Health Sciences & Life Sciences & Physical Sciences & Social Sciences\\
+\midrule
+K. M. Ariful Kabir (5) & Joel S. Brown (15) & Dusit Niyato (49) & Martin A. Nowak (56)\\
+Paolo Russu (5) & Ross Cressman (9) & Zhu Han (43) & Matjaž Perc (39)\\
+Angelo Antoci (4) & Jan Rychtář (8) & H. Vincent Poor (36) & Arne Traulsen (38)\\
+Jan Rychtář (4) & J. M. Cushing (7) & Tamer Başar (26) & Andrzej S. Nowak (36)\\
+Monica–Gabriela Cojocaru (4) & Gordon G. McNickle (6) & Yuhua Xu (26) & Zhen Wang (33)\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\newpage
+
+\subsection{7.3 Top Authors per Field}\label{top-authors-per-field}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per field}Top Authors in Terms of Citations per Field}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Authors} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Field &  &  & \\
+\midrule
+Business, Management and Accounting & Arvind Parkhe (3117) & Rajiv Lal (1604) & Debabrata Ghosh (1399)\\
+Computer Science & Dusit Niyato (4370) & Ekram Hossain (2180) & Narayan B. Mandayam (2170)\\
+Decision Sciences & Robert Wilson (3153) & Eric Maskin (3152) & David M. Kreps (3101)\\
+Economics, Econometrics and Finance & Charles F. Manski (2052) & Dilip Abreu (2039) & David Pearce (2005)\\
+Engineering & Vincent W. S. Wong (3013) & Robert Schober (2916) & Daniel P. Palomar (2715)\\
+Mathematics & Christopher A. Klausmeier (294) & Elena Litchman (294) & Donald A. Martin (259)\\
+Physics and Astronomy & David Meyer (744) & Hui‐Jia Li (503) & Jie Cao (427)\\
+Psychology & Herbert Gintis (411) & Geoffrey F. Miller (399) & Peter M. Todd (368)\\
+Social Sciences & Martin A. Nowak (10842) & Matjaž Perc (7273) & Attila Szolnoki (5183)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per field}Top Authors in Terms of Publications per Field}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Authors} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Field &  &  & \\
+\midrule
+Business, Management and Accounting & Tsan‐Ming Choi (15) & Ata Allah Taleizadeh (14) & Junhai Ma (14)\\
+Computer Science & Dusit Niyato (27) & Zhu Han (19) & H. Vincent Poor (18)\\
+Decision Sciences & Ehud Lehrer (15) & Eilon Solan (15) & János Flesch (15)\\
+Economics, Econometrics and Finance & Andrzej S. Nowak (35) & S.H. Tijs (24) & René van den Brink (23)\\
+Engineering & Zhu Han (22) & Dusit Niyato (21) & Walid Saad (17)\\
+Mathematics & Jun Tanimoto (4) & K. M. Ariful Kabir (4) & Marco Archetti (4)\\
+Physics and Astronomy & Azhar Iqbal (7) & Derek Abbott (7) & Hui‐Jia Li (7)\\
+Psychology & Alasdair I. Houston (2) & David R. Ewoldsen (2) & Dennis R. Brophy (2)\\
+Social Sciences & Martin A. Nowak (55) & Arne Traulsen (38) & Matjaž Perc (38)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{7.4 Top Authors per
+Subfield}\label{top-authors-per-subfield}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per subfield}Top Authors in Terms of Citations per Subield}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Authors} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Subield &  &  & \\
+\midrule
+Aerospace Engineering & Arumugam Nallanathan (498) & Jingjing Cui (498) & Yuanwei Liu (498)\\
+Artificial Intelligence & Changchuan Yin (499) & Mingzhe Chen (499) & Walid Saad (499)\\
+Automotive Engineering & Xiaoxiang Na (455) & David J. Cole (310) & Adam Millard‐Ball (291)\\
+Building and Construction & Zhi Yang (275) & Jian Zuo (234) & Guangdong Wu (214)\\
+Civil and Structural Engineering & Jun Zhuang (880) & Vicki M. Bier (597) & Oğuzhan Alagöz (268)\\
+Computational Theory and Mathematics & Frank L. Lewis (611) & Anne Condon (501) & Kyriakos G. Vamvoudakis (479)\\
+Computer Networks and Communications & Dusit Niyato (2671) & Ekram Hossain (2180) & Narayan B. Mandayam (2108)\\
+Control and Systems Engineering & Tamer Başar (1722) & P. Bernhard (1066) & Hao Wang (894)\\
+Ecology, Evolution, Behavior and Systematics & Mart R. Gross (1681) & Hanna Kokko (1265) & Rufus A. Johnstone (1262)\\
+Economics and Econometrics & Charles F. Manski (2052) & Dilip Abreu (2039) & David Pearce (2005)\\
+Electrical and Electronic Engineering & Vincent W. S. Wong (3013) & Robert Schober (2916) & Daniel P. Palomar (2715)\\
+Finance & Agatha Murgoci (728) & Tomas Björk (728) & Suresh Sundaresan (559)\\
+General Decision Sciences & Colin F. Camerer (1305) & Teck‐Hua Ho (1002) & Dražen Prelec (303)\\
+General Economics, Econometrics and Finance & Thomas J. Sargent (673) & William A. Bomberger (673) & Francisco J. Ruge-Murciá (269)\\
+Genetics & Karl Sigmund (1194) & Martin A. Nowak (1162) & Lin Chao (795)\\
+Global and Planetary Change & Ray Dybzinski (426) & Jacob Johansson (291) & Oskar Franklin (291)\\
+Industrial and Manufacturing Engineering & Yong Wang (318) & Maozeng Xu (301) & Xiaolei Ma (301)\\
+Information Systems & Dusit Niyato (1457) & Ping Wang (1396) & Wenbo Wang (1396)\\
+Management Information Systems & Greys Sošić (607) & Mahesh Nagarajan (607) & Tiaojun Xiao (576)\\
+Management Science and Operations Research & Robert Wilson (3153) & Eric Maskin (3152) & David M. Kreps (3101)\\
+Marketing & Rajiv Lal (1604) & C. Lanier Benkard (869) & Jonathan Levin (869)\\
+Modeling and Simulation & Christopher A. Klausmeier (294) & Elena Litchman (294) & Jun Tanimoto (255)\\
+Ocean Engineering & Kaveh Madani (556) & Reza Kerachian (453) & Armaghan Abed‐Elmdoust (254)\\
+Political Science and International Relations & Alberto Alesina (823) & Wolfgang Mayer (666) & Robert Powell (653)\\
+Public Health, Environmental and Occupational Health & Gerry Mackie (765) & Don M. Hugie (260) & Lawrence M. Dill (260)\\
+Safety Research & Martin Dufwenberg (2977) & David M. Kreps (2512) & John Roberts (2512)\\
+Sociology and Political Science & Martin A. Nowak (10593) & Matjaž Perc (7209) & Attila Szolnoki (5177)\\
+Statistical and Nonlinear Physics & Hui‐Jia Li (503) & Jie Cao (427) & Zhan Bu (420)\\
+Strategy and Management & Arvind Parkhe (3117) & Debabrata Ghosh (1392) & Janat Shah (1392)\\
+Transportation & Michael G.H. Bell (593) & Nicolás E. Stier‐Moses (412) & Andreas S. Schulz (386)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per subfield cont}Top Authors in Terms of Publications per Subfield}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Authors} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Subfield &  &  & \\
+\midrule
+Aerospace Engineering & Chenguang Shi (9) & Jianjiang Zhou (9) & I. S. Rappoport (6)\\
+Artificial Intelligence & Michael Wooldridge (8) & Zhen Zhang (6) & Dongqing Wang (5)\\
+Atomic and Molecular Physics, and Optics & Azhar Iqbal (6) & Derek Abbott (6) & Edward W. Piotrowski (5)\\
+Automotive Engineering & Xiqun Chen (5) & Dong Mo (4) & Shaobo Lu (4)\\
+Building and Construction & Feng Xiong (3) & Qingfeng Meng (3) & Shuaian Wang (3)\\
+Civil and Structural Engineering & Jun Zhuang (10) & Julio B. Clempner (6) & Genserik Reniers (5)\\
+Computational Theory and Mathematics & Frank L. Lewis (5) & Huaguang Zhang (5) & I. V. Konnov (5)\\
+Computer Networks and Communications & Dusit Niyato (18) & H. Vincent Poor (17) & Zhu Han (17)\\
+Control and Systems Engineering & Tamer Başar (8) & Han Zhao (7) & Daniel E. Quevedo (6)\\
+Ecology, Evolution, Behavior and Systematics & Hanna Kokko (5) & Leigh W. Simmons (5) & Luc‐Alain Giraldeau (5)\\
+Economics and Econometrics & Andrzej S. Nowak (35) & René van den Brink (23) & S.H. Tijs (23)\\
+Electrical and Electronic Engineering & Zhu Han (21) & Dusit Niyato (19) & H. Vincent Poor (14)\\
+Finance & Han Smit (5) & Sheng Li (5) & Chandan Pal (4)\\
+General Economics, Econometrics and Finance & Assar Lindbeck (2) & Francisco J. Ruge-Murciá (2) & Jan Libich (2)\\
+Genetics & Joel S. Brown (10) & Ross Cressman (9) & J. M. Cushing (6)\\
+Global and Planetary Change & U. Rashid Sumaila (5) & Gordon R. Munro (3) & Marko Lindroos (3)\\
+Industrial and Manufacturing Engineering & Meifeng Luo (4) & Yong Wang (4) & George Q. Huang (3)\\
+Information Systems & Xing Gao (7) & Dusit Niyato (5) & Quanyan Zhu (5)\\
+Management Information Systems & Tiaojun Xiao (10) & Ata Allah Taleizadeh (9) & Junhai Ma (9)\\
+Management Science and Operations Research & Ehud Lehrer (15) & Eilon Solan (15) & János Flesch (15)\\
+Marketing & Salma Karray (11) & Guiomar Martín‐Herrán (8) & Ruiliang Yan (8)\\
+Modeling and Simulation & Jun Tanimoto (4) & K. M. Ariful Kabir (4) & Marco Archetti (4)\\
+Ocean Engineering & Reza Kerachian (12) & Armaghan Abed‐Elmdoust (6) & Richárd Kicsiny (5)\\
+Political Science and International Relations & George Tsebelis (5) & Christophe Crombez (4) & David Austen‐Smith (2)\\
+Public Health, Environmental and Occupational Health & K. M. Ariful Kabir (4) & Monica–Gabriela Cojocaru (4) & Mark Broom (3)\\
+Safety Research & Colin F. Camerer (8) & Amnon Rapoport (7) & Andrew M. Colman (7)\\
+Sociology and Political Science & Martin A. Nowak (53) & Arne Traulsen (38) & Matjaž Perc (37)\\
+Statistical and Nonlinear Physics & Hui‐Jia Li (7) & Jie Cao (7) & Yan Chen (6)\\
+Strategy and Management & Ashkan Hafezalkotob (8) & Wei Li (7) & Kannan Govindan (6)\\
+Transportation & Byung‐Wook Wie (5) & Chengguang Liu (3) & Fenling Feng (3)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{7.5 Top Authors per
+Discipline}\label{top-authors-per-discipline}
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per discipline}Top Authors in Terms of Citations per Discipline}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Authors} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Discipline &  &  & \\
+\midrule
+Arts & Chunli Fu (17) & Keyong Zhang (17) & Ruiyuan Cong (17)\\
+Biology & Mart R. Gross (1681) & John M. McNamara (1531) & Alasdair I. Houston (1425)\\
+Biomedical Research & Martin A. Nowak (11850) & Hisashi Ohtsuki (4001) & Matjaž Perc (3748)\\
+Chemistry & Han‐Yue Zhang (363) & Ping‐Ping Shi (363) & Ren‐Gen Xiong (363)\\
+Computer Science & Xu Chen (1692) & Tansu Alpcan (1299) & Dusit Niyato (1272)\\
+Economics & David M. Kreps (5769) & Robert Wilson (5687) & Eric Maskin (5025)\\
+Engineering and Technology & Dusit Niyato (4390) & Zhu Han (3779) & Tamer Başar (3316)\\
+Geoscience & Lang Xu (687) & Kaveh Madani (569) & Daming You (484)\\
+Health & Amori Yee Mikami (84) & Keith Humphreys (84) & Margaret A. Boucher (84)\\
+Humanities & Robert van Rooy (272) & Bryce Huebner (225) & Mark G. Chen (164)\\
+Law & John T. Scholz (270) & Jack Knight (158) & Lee Epstein (158)\\
+Management & Arvind Parkhe (3117) & Rajiv Lal (1604) & Jan W. Rivkin (1292)\\
+Mathematics & Xiaotie Deng (899) & Alvin E. Roth (895) & Francisco C. Santos (799)\\
+Medicine & Daeyeol Lee (1129) & Dominic J. Barraclough (825) & Michelle Conroy (696)\\
+Operations Research & Michael G.H. Bell (686) & Jun Zhuang (625) & Vicki M. Bier (429)\\
+Other Professional Fields & Anna Nagurney (241) & Yong He (226) & Huseyin Cavusoglu (225)\\
+Other Social Sciences & Eddie C.M. Hui (426) & Jun Zhuang (328) & Adam Millard‐Ball (291)\\
+Physics & Matjaž Perc (3075) & Zhen Wang (2326) & Attila Szolnoki (2223)\\
+Political Science & Barry R. Weingast (1776) & John H. Aldrich (1210) & David Austen‐Smith (980)\\
+Psychology & Peter Hammerstein (1263) & Linda Mealey (984) & Ronald No� (882)\\
+Sociology & Gerry Mackie (765) & Elisa Jayne Bienenstock (375) & Phillip Bonacich (375)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\begin{table}[H]
+
+\caption{\label{tab:authors per discipline cont}Top Authors in Terms of Publications per Subfield}
+\centering
+\fontsize{8}{10}\selectfont
+\begin{tabular}[t]{llll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Authors} \\
+\cmidrule(l{3pt}r{3pt}){2-4}
+Discipline &  &  & \\
+\midrule
+Arts & Amin Mahmoudi (1) & Aoxuan Jin (1) & Chaoyong Zhang (1)\\
+Biology & Joel S. Brown (10) & Gordon G. McNickle (6) & Mark Broom (6)\\
+Biomedical Research & Martin A. Nowak (53) & Arne Traulsen (24) & Ross Cressman (18)\\
+Chemistry & André Jalles Monteiro (2) & Antônio José Melo Leite (2) & José Nunes da Silva (2)\\
+Computer Science & Kenli Li (14) & Keqin Li (14) & Qiang Zhang (14)\\
+Economics & Drew Fudenberg (20) & Ehud Lehrer (18) & René van den Brink (14)\\
+Engineering and Technology & Dusit Niyato (41) & Zhu Han (41) & H. Vincent Poor (30)\\
+Geoscience & Reza Kerachian (11) & Hong Chen (7) & Zhisong Chen (7)\\
+Health & Lilong Zhu (3) & Hualei Yang (2) & June Liu (2)\\
+Humanities & Michael Franke (4) & Ahti‐Veikko Pietarinen (3) & Anton Benz (2)\\
+Law & George Halkos (2) & Johannes Urpelainen (2) & Qianqian Li (2)\\
+Management & Ruiliang Yan (13) & Jun Zhuang (11) & S.H. Tijs (11)\\
+Mathematics & Andrzej S. Nowak (20) & Junhai Ma (15) & O. J. Vrieze (15)\\
+Medicine & Amnon Sonnenberg (4) & Daeyeol Lee (3) & A Pandya (2)\\
+Operations Research & Gerhard‐Wilhelm Weber (9) & Jun Zhuang (8) & Sırma Zeynep Alparslan Gök (8)\\
+Other Professional Fields & Hai Yang (4) & Xiqun Chen (4) & Andrew B. Whinston (3)\\
+Other Social Sciences & Jun Zhuang (7) & Mohammad Taleai (4) & Somaie Abolhasani (4)\\
+Physics & Zhen Wang (21) & Matjaž Perc (20) & Jun Tanimoto (13)\\
+Political Science & Johannes Urpelainen (11) & Christophe Crombez (6) & Ahmer Tarar (5)\\
+Psychology & Andrew M. Colman (6) & Joachim I. Krueger (6) & Lee Alan Dugatkin (5)\\
+Sociology & Elisa Jayne Bienenstock (4) & Phillip Bonacich (4) & Werner Raub (4)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+
+\section{8. Journal Overview}\label{journal-overview}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/journals-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/journals-2.pdf}}
+
+\section{9. Distribution of Concepts}\label{distribution-of-concepts}
+
+\includegraphics[width=1\linewidth]{02_descriptives_files/figure-latex/concept_dist-1}
+
+\section{10. Keywords}\label{keywords}
+
+\pandocbounded{\includegraphics[keepaspectratio]{02_descriptives_files/figure-latex/keywords-1.pdf}}
+
+\begin{table}[H]
+
+\caption{\label{tab:keywords}Top Keywords}
+\centering
+\begin{tabular}[t]{lr}
+\toprule
+keywords & N\\
+\midrule
+Computer science & 13084\\
+Economics & 9470\\
+Game theory & 8135\\
+Mathematics & 8063\\
+Microeconomics & 6742\\
+Mathematical economics & 6225\\
+Business & 4823\\
+Mathematical optimization & 4398\\
+Artificial intelligence & 3558\\
+Nash equilibrium & 3548\\
+Engineering & 2959\\
+Industrial organization & 2518\\
+Marketing & 2352\\
+Computer network & 2012\\
+Political science & 1834\\
+Psychology & 1710\\
+Telecommunications & 1610\\
+Operations research & 1551\\
+Repeated game & 1513\\
+Computer security & 1436\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

@@ -1,0 +1,922 @@
+---
+title: "discipline-Level Analysis"
+output: pdf_document
+date: "2025-11-20"
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = F, message = F,
+                      fig.width = 10, fig.height = 8, dpi = 300, out.width = "100%")
+
+library(tidyverse)
+library(openalexR)
+library(tidyverse)
+library(here)
+library(bibliometrix)
+library(bibliometrixData)
+library(ggwordcloud)
+library(kableExtra)
+library(ggalluvial)
+library(knitr)
+library(kableExtra)
+library(tidytext)
+
+
+unfill_vec <- function(x) {
+  same <- x == dplyr::lag(x)
+  ifelse(!is.na(same) & same, "", x)
+}
+
+```
+
+
+```{r data load and prep, cache=TRUE}
+
+
+rds_files <- paste0("Evolution Fields/",list.files("Evolution Fields"))
+
+rds_files_discipline_discipline <- paste0("Field_Field_Data/", list.files("Field_Field_Data"))
+
+
+disciplines_notof_interest <- c("Arts", "Humanities", "Other Professional Fields", "Law",
+                        "Medicine", "Health", "Physics", "Chemistry")
+
+
+# Read and combine
+all_metrics <- rds_files %>%
+  map_dfr(function(f) {
+    
+    
+    df <- readRDS(f)
+    
+    # Extract window from filename
+    # Assumes filenames like "1970-1974_metrics.RDS"
+    window <- str_extract(basename(f), "\\d{4}-\\d{4}")
+    
+    df %>% mutate(window = window)
+  }) |> 
+  drop_na() |> 
+  mutate(window = factor(window, levels = unique(window))) |> 
+  group_by(window) |> 
+  mutate(totalnumbernodes = sum(numbernodes),
+         totalnumberedges = sum(totaledges)) |> 
+  ungroup() |> 
+  mutate(relative_size_nodes = numbernodes/totalnumbernodes,
+         relative_size_edges = totaledges/totalnumberedges,
+         relative_size_within_edges = withinedges/totalnumberedges,
+         relative_size_between_edges = between_edges/totalnumberedges,
+         size_share_window = numbernodes/totalnumbernodes) |> 
+  filter(!id %in% disciplines_notof_interest)
+
+
+all_metrics_discipline_discipline <- rds_files_discipline_discipline %>%
+  map_dfr(function(f) {
+    df <- readRDS(f)
+    
+    # Extract window from filename
+    # Assumes filenames like "1970-1974_metrics.RDS"
+    window <- str_extract(basename(f), "\\d{4}-\\d{4}")
+    
+    df %>% mutate(window = window)  |> 
+      filter(field_min != field_max) |> 
+      mutate(pair = paste(field_min, field_max, sep = " – "))
+  }) |> 
+  group_by(window) |> 
+  mutate(N_edges_rel = N_edges/sum(N_edges)) |> 
+  separate(window, into = c("start", "end"), remove=F, sep="-") |> 
+  mutate_at(vars(start, end), as.numeric) |> 
+  filter(start >= 1980) |> 
+  filter(!field_min %in% disciplines_notof_interest & !field_max %in% disciplines_notof_interest) |> 
+  rename(discipline_min = field_min, discipline_max = field_max)
+
+
+
+df_long <- all_metrics %>%
+  tidyr::pivot_longer(cols = c(internalratio, externalratio,degree,
+                               betweeness, closeness, between_edges, withinedges,
+                               numbernodes, totaledges, relative_size_nodes,
+                               relative_size_edges,relative_size_within_edges,
+                               relative_size_between_edges, citations),
+                      names_to = "type", values_to = "value") |> 
+  drop_na(discipline)
+
+
+temporal_network_with_names <- readRDS("Temporal Networks/temporal_networks_with_names.RDS")
+
+topic_files <- paste0("topics/", list.files("topics"))
+
+data_topics <- map_dfr(topic_files, readRDS)
+
+```
+
+```{r prep citation flows, cache=TRUE}
+
+data <- readRDS("data_final_1980.RDS") 
+
+data_references <- readRDS("data_references_final.RDS")
+
+## Extracting authors
+
+authors <- data |> 
+  select(oa_id, authorships, cited_by_count) |> 
+  unnest(cols = c(authorships)) |> 
+  select(oa_id, display_name, cited_by_count) 
+
+## Authors as strings
+
+authors_string <- authors |> 
+  group_by(oa_id) |> 
+  summarise(authors = paste(display_name, collapse = ";"), .groups = "drop") 
+
+meta <- data |> 
+  select(oa_id, title, publication_year, year_bucket_10, cited_by_count, topic_1, subfield_1, field_1, domain_1, discipline) |> 
+  left_join(authors_string)
+
+
+data_ref <- data |> 
+  select(oa_id, referenced_works) |> 
+  left_join(meta |> select(oa_id, publication_year, discipline)) |> 
+  unnest_longer(referenced_works) |> 
+  rename(oa_id_to = oa_id, oa_id_from = referenced_works, discipline_to = discipline) |> 
+  left_join(data_references |> select(oa_id, discipline), by=c("oa_id_from"="oa_id")) |> 
+  rename(discipline_from = discipline) 
+
+
+windows_moving <- tibble(
+  start = 1980:2020,
+  end   = start + 4,
+  window_moving = paste0(start, "-", end)
+)
+
+windows <- data |> 
+  distinct(publication_year)
+
+windows$window <- cut(
+  windows$publication_year,
+  breaks = c(seq(1980, 2021, by = 4), 2025),  # last bin ends just after 2025
+  right  = FALSE,
+  labels = c(
+    paste(seq(1980, 2016, 4), seq(1984, 2020, 4), sep = "-"),
+    "2021-2024"
+  )
+)
+
+
+
+cit_link <- data_ref |> 
+  drop_na(discipline_to, discipline_from) |> 
+  group_by(publication_year, discipline_to, discipline_from) |> 
+  summarise(N =n()) 
+
+cit_link_moving <- cit_link %>%
+  inner_join(
+    windows_moving,
+    by = character(),   # cross join
+  ) %>%
+  filter(publication_year >= start,
+         publication_year <= end)
+
+cit_link_moving <- cit_link_moving %>%
+  group_by(window_moving, discipline_to, discipline_from) %>%
+  summarise(N = sum(N), .groups = "drop") %>%
+  group_by(window_moving, discipline_to) %>%
+  mutate(N_total = sum(N),
+         N_rel = N / N_total) %>%
+  ungroup() |> 
+  filter(!discipline_to %in% disciplines_notof_interest & !discipline_from %in% disciplines_notof_interest)
+
+coc <- cit_link |> 
+  filter(discipline_to != discipline_from) |> 
+  group_by(publication_year, discipline_to) |> 
+  summarise(N_outside = sum(N)) |> 
+  rename(discipline = discipline_to)
+
+coc_moving <- cit_link_moving |> 
+  filter(discipline_to != discipline_from) |> 
+  group_by(window_moving, discipline_to) |> 
+  summarise(N_outside = sum(N)) |> 
+  rename(discipline = discipline_to)
+
+cic <- cit_link |> 
+  filter(discipline_to == discipline_from) |> 
+  group_by(publication_year, discipline_to) |> 
+  summarise(N_inside = sum(N)) |> 
+  rename(discipline = discipline_to)
+
+cic_moving <- cit_link_moving |> 
+  filter(discipline_to == discipline_from) |> 
+  group_by(window_moving, discipline_to) |> 
+  summarise(N_inside = sum(N)) |> 
+  rename(discipline = discipline_to)
+
+outside_give <- cit_link |> 
+  filter(discipline_to != discipline_from) |> 
+  group_by(publication_year, discipline_from) |> 
+  summarise(N_give_out= sum(N)) |> 
+  rename(discipline = discipline_from)
+
+
+inside_give <- cit_link |> 
+  filter(discipline_to == discipline_from) |> 
+  group_by(publication_year, discipline_from) |> 
+  summarise(N_give_in= sum(N)) |> 
+  rename(discipline = discipline_from)
+
+
+discipline_overview <- coc |> 
+  left_join(cic) |> 
+  left_join(outside_give) |>
+  left_join(inside_give) |> 
+  mutate_all(~replace_na(.x, 0)) |> 
+  mutate(coc = N_outside/(N_outside+N_inside),
+         cic = N_inside/(N_outside+N_inside),
+         outside_give = N_give_out/(N_give_out+N_give_in),
+         inside_give = N_give_in/(N_give_out+N_give_in)) |> 
+  mutate_all(~replace_na(.x, 0))
+
+discipline_overview_long <- discipline_overview |> 
+  pivot_longer(cols = c(coc, cic, outside_give, inside_give), names_to = "variable", values_to = "fraction") |> 
+  filter(!discipline %in% disciplines_notof_interest)
+
+
+discipline_overview_moving <- coc_moving |> 
+  left_join(cic_moving) |> 
+  mutate_all(~replace_na(.x, 0)) |> 
+  mutate(coc = N_outside/(N_outside+N_inside),
+         cic = N_inside/(N_outside+N_inside)) |> 
+  mutate_all(~replace_na(.x, 0))
+
+discipline_overview_moving_long <- discipline_overview_moving |> 
+  pivot_longer(cols = c(coc, cic), names_to = "variable", values_to = "fraction") |> 
+  filter(!discipline %in% disciplines_notof_interest)
+
+discipline_overview_long_window <- discipline_overview |> 
+  left_join(windows) |> 
+  group_by(discipline, window) |> 
+  summarise_at(vars(coc, cic, outside_give, inside_give), mean) |> 
+  pivot_longer(cols = c(coc, cic, outside_give, inside_give), names_to = "variable", values_to = "fraction") |> 
+  filter(!discipline %in% disciplines_notof_interest) |> 
+  mutate(
+    window_start = as.numeric(sub("-.*$", "", window)),
+    window_end   = as.numeric(sub("^.*-", "", window)),
+    window_mid   = (window_start + window_end) / 2
+  )
+
+
+cit_link_filt <- cit_link |> 
+  filter(!discipline_to %in% disciplines_notof_interest &  !discipline_from %in%  disciplines_notof_interest) |>
+  group_by(discipline_to, publication_year) |> 
+  mutate(N_total = sum(N), N_rel =N/N_total) |> 
+  left_join(windows)  %>%
+  mutate(
+    window_start = as.numeric(sub("-.*$", "", window)),
+    window_end   = as.numeric(sub("^.*-", "", window)),
+    window_mid   = (window_start + window_end) / 2
+  )
+
+cit_link_filt_moving <- cit_link_moving |> 
+  filter(!discipline_to %in% disciplines_notof_interest &  !discipline_from %in%  disciplines_notof_interest) |>
+  group_by(discipline_to, window_moving) |>  
+  mutate(N_total = sum(N), N_rel =N/N_total)  %>%
+  mutate(
+    window_start = as.numeric(sub("-.*$", "", window_moving)),
+    window_end   = as.numeric(sub("^.*-", "", window_moving)),
+    window_mid   = (window_start + window_end) / 2
+  )
+
+
+
+```
+
+
+
+```{r plotting funcs, cache=TRUE}
+plot_type <- function(data){
+  
+  data_plot <- data |> 
+    filter(!is.na(type)) |> 
+    group_by(window, type) |> 
+    summarise(value = mean(value), .groups = "drop")
+  
+  ggplot(data_plot, aes(x = window, y = value)) +
+    geom_jitter(width = 0.2, height = 0, alpha = 0.7) +
+    theme_minimal() +
+    facet_wrap(~type, scales="free") +
+    theme(axis.text = element_blank()) +
+    labs(y = "Metric", x = "Window")
+  
+  
+}
+
+
+disciplines <- data |> 
+  distinct(discipline) |> 
+  filter(!discipline %in% disciplines_notof_interest)
+
+
+plot_type_discipline <- function(data,metric){
+  
+  data_plot <- data |> 
+    filter(type %in% metric) |> 
+    mutate(discipline = factor(discipline, levels = disciplines$discipline)) |> 
+    filter(!is.na(discipline))
+  
+  if(length(metric) >= 2){
+    
+    name <- paste(metric, collapse = "\\/")
+    
+    ggplot(data_plot, aes(x = window, y = value,color=type)) +
+    geom_jitter(width = 0.2, height = 0, alpha = 0.7) +
+    theme_minimal() +
+facet_wrap(
+    ~discipline, 
+    ncol = 3,
+    labeller = labeller(discipline = function(x) str_wrap(x, width = 30))
+  ) +    theme(strip.text.x = element_text(size = 9, margin = margin(t = 5, b = 5)),
+          strip.text.y = element_text(size = 9, margin = margin(l = 5, r = 5)),
+          plot.margin = grid::unit(c(1,1,1,1), "cm"),
+          axis.text = element_blank(),
+          legend.position = "bottom") +
+    labs(y = "Metric", x = "Window") 
+
+  } else{
+    
+  ggplot(data_plot, aes(x = window, y = value,color=type)) +
+    geom_jitter(width = 0.2, height = 0, alpha = 0.7) +
+    theme_minimal() +
+facet_wrap(
+    ~discipline, 
+    ncol = 3,
+    labeller = labeller(discipline = function(x) str_wrap(x, width = 30))
+  ) +    theme(strip.text.x = element_text(size = 9, margin = margin(t = 5, b = 5)),
+          strip.text.y = element_text(size = 9, margin = margin(l = 5, r = 5)),
+          plot.margin = grid::unit(c(1,1,1,1), "cm"),
+          axis.text = element_blank(),
+          legend.position = "none") +
+    labs(y = toupper(metric), x = "Window")
+
+  
+  }
+}
+
+
+```
+
+
+# 1. Aggregate Metrics
+The Metrics used here are formally defined on a per-discipline basis below. The aggregate metrics are computed similarly, but over all disciplines instead of per discipline.
+
+## 1.1 Evolution Aggregate of Metrics
+
+```{r metrics_agg, cache=TRUE}
+plot_type(df_long)
+```
+
+\newpage
+
+## 1.2 Number of Nodes and Edges over Time
+
+```{r n edges nodes}
+
+summ <- all_metrics |> 
+  group_by(window) |> 
+  summarise(totalnumbernodes = unique(totalnumbernodes), totalnumberedges = unique(totalnumberedges))
+
+
+kable(summ, "latex", booktabs = TRUE, linesep = "", col.names = c("Window", "Number of Nodes", "Number of Edges")) |> 
+  kable_styling(position = "center", latex_options = "hold_position")
+
+
+```
+
+
+\newpage
+
+# 2. Evolution of disciplines
+
+discipline-Level Metrics are derived from networks where articles are nodes and edges are based on the strength of bibliographic coupling between articles. The nodes, edges and their information is then aggregated per discipline, here called discipline.
+
+## 2. Relative Number of Nodes and Number of Citations
+
+- Relative number of Nodes:
+\begin{equation}
+RelNodes_{t,f} = \frac{N(V)_{t,f}}{\sum_f^F N(V)_{t,f}} 
+\end{equation}
+where:
+- $RelNodes_{t,f}$ measures the relative number of nodes for discipline $f$ in time window $t$ across all article nodes
+- $N(V)_{t,f}$ measures the total number of nodes for discipline $f$ in time window $t$ across all article nodes. It is therefore defined as $N(V)_{t,f} = \sum_{v_i} 1_{discipline(v_i)=f}$, where $1_{discipline(v_i)=f}$ is an indicator function, taking the value one if article node $v_i$ belongs to discipline $f$.
+
+- The number of citations per discipline and time window is measured as the sum of citations across all articles of a discipline in a give time window, respectively.
+
+```{r nodes_citations}
+plot_type_discipline(df_long, metric = c("relative_size_nodes")) +
+  ggtitle("Evolution of Relative Number of Nodes per discipline")
+plot_type_discipline(df_long, metric = c("citations")) +
+  ggtitle("Evolution of Citations per discipline")
+
+
+ggplot(all_metrics,
+       aes(x = window,
+           stratum = id,
+           alluvium = id,
+           y = size_share_window,
+           fill = id)) +
+  geom_flow(stat = "alluvium", lode.guidance = "forward", alpha = 0.8) +
+  geom_stratum(width = 1/12, color = "black") +
+  scale_fill_viridis_d(option = "plasma") +
+  theme_minimal() +
+  theme(legend.title = element_blank(), legend.position = "bottom") +
+ #ggtitle("Alluvial of discipline Shares over Time") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Window", y = "discipline Share per Window")
+```
+
+\newpage
+
+## 2.2 Relative Number of Edges
+
+- Relative Number of Total Edges:
+\begin{equation}
+RelEdges_{t,f} = \frac{N(E)_{t,f}}{\sum_f^F N(E)_{t,f}} 
+\end{equation}
+where:
+- $RelEdges_{t,f}$ measures the relative number of edges incident on nodes within discipline $f$ in time window $t$
+- $N(E)_{t,f}$ measures the total number of edges incident on nodes within discipline $f$ in time window $t$. It is therefore defined as $N(E)_{t,f} = \sum_{e=(v_i,v_j)} 1_{discipline(v_i)=f \: \vee \: discipline(v_j) = f}$, where $1_{discipline(v_k)=f}$ is an indicator function, taking the value one if article node $k$ belongs to discipline $f$
+
+- Relative Number of Within-discipline Edges:
+\begin{equation}
+RelEdgesWithin_{t,f} = \frac{N(E_{within})_{t,f}}{\sum_f^F N(E)_{t,f}} 
+\end{equation}
+where:
+- $RelEdgesWithin_{t,f}$ measures the relative number of edges between article nodes of the same discipline for discipline $f$ in time window $t$
+- $N(E_{within})_{t,f}$ measures the total number of edges between article nodes of the same discipline for discipline $f$ in time window $t$. It is therefore defined as $N(E_{within})_{t,f} = \sum_{e=(v_i,v_j)} 1_{discipline\{(v_i)=f\}} 1_{\{discipline(v_j) = f\}}$, where $1_{discipline(v_k)=f}$ is an indicator function, taking the value one if article node $k$ belongs to discipline $f$.
+
+- Relative Number of Between-discipline Edges:
+\begin{equation}
+RelEdgesBetween_{t,f} = \frac{N(E_{Between})_{t,f}}{\sum_f^F N(E)_{t,f}} 
+\end{equation}
+where:
+- $RelEdgesBetween_{t,f}$ measures the relative number of edges between article nodes of different disciplines for discipline $f$ in time window $t$
+- $N(E_{Between})_{t,f}$ measures the total number of edges between article nodes of different disciplines for discipline $f$ in time window $t$. It's defined as $N(E_{Between})_{t,f} = \sum_{e=(v_i,v_j)} \left ( 1_{discipline\{(v_i=f)\}} 1_{discipline\{(v_j \neq f)\}} + 1_{discipline\{(v_i \neq f)\}} 1_{discipline\{(v_j = f)\}}  \right )$.
+
+
+```{r edges}
+plot_type_discipline(df_long, metric = c("relative_size_edges"))  +
+  ggtitle("Evolution of Relative Number of Edges per discipline") # Edges(discipline)/Edges(TotalWindow)
+plot_type_discipline(df_long, metric = c("relative_size_within_edges", "relative_size_between_edges"))  +
+  ggtitle("Evolution of Relative Number of Edges within/between disciplines")
+# Edges(Withindiscipline)/Edges(TotalWindow), Edges(Betweendiscipline)/Edges(TotalWindow)
+```
+
+\newpage
+
+## 2.3 Internal and External Edge Ratio
+- Internal Edge Ratio:
+\begin{equation}
+IR_{t,f} = \frac{N(E_{within})_{t,f}}{N(E)_{t,f}}
+\end{equation}
+- External Edge Ratio:
+\begin{equation}
+ER_{t,f} = \frac{N(E_{between})_{t,f}}{N(E)_{t,f}}
+\end{equation}
+
+with $N(E_{within})_{t,f}$, $N(E_{between})_{t,f}$ and N(E)_{t,f} defined as before. The internal and external ratios therefore measure the ratio of edges within (between) disciplines relative to the total number of edges of a discipline. Edges are derived from article-level nodes.
+
+```{r ratios}
+plot_type_discipline(df_long, metric = c("internalratio", "externalratio")) +
+  ylab(label = "Internal/External Edge Ratio") + scale_color_discrete(
+  name = "Metric",   # legend title
+  labels = c("internalratio" = "Internal Ratio", 
+             "externalratio" = "External Ratio")
+)   +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("1980-1984", "2000-2004", "2020-2024"))
+
+# Edges(Withindiscipline)/Edges(Withindiscipline)+Edges(Betweendiscipline), Edges(Betweendiscipline)/Edges(Withindiscipline)+Edges(Betweendiscipline)
+```
+
+\newpage
+
+## 2.4 Network Centrality Metrics (Degree, Closeness and Betweennes)
+
+```{r network_stats}
+plot_type_discipline(df_long, metric = c("degree"))  +
+  ggtitle("Evolution of discipline-level Degree")
+```
+
+\newpage
+
+```{r network_stats_cont}
+plot_type_discipline(df_long, metric = c("closeness"))  +
+  ggtitle("Evolution of discipline-level Closeness")
+plot_type_discipline(df_long, metric = c("betweeness"))  +
+  ggtitle("Evolution of discipline-level Betweeness")
+```
+
+
+# 3. discipline-discipline Connectivity
+
+## 3.1 Average Connectivity
+
+```{r average_connectivity}
+
+all_metrics_discipline_discipline_avg <- all_metrics_discipline_discipline |> 
+  group_by(discipline_min, discipline_max) |> 
+  summarise_at(vars(N_edges, N_edges_rel), mean)
+
+ggplot(all_metrics_discipline_discipline_avg, aes(x = discipline_min, y = discipline_max, fill = N_edges)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    panel.grid = element_blank()
+  ) +
+  ggtitle("Average Number of Egdes between disciplines")
+
+
+```
+
+\newpage
+
+```{r average_connectivity_cont}
+
+
+
+ggplot(all_metrics_discipline_discipline_avg, aes(x = discipline_min, y = discipline_max, fill = N_edges_rel)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    panel.grid = element_blank()
+  ) +
+  ggtitle("Average Number of Egdes between disciplines (on a relative basis)")
+
+
+
+```
+\newpage
+
+## 3.2 Connectivity over time 
+
+### 3.2.1 Heatmaps
+
+```{r heatmap n over time, fig.height=16, fig.width=12}
+
+ggplot(all_metrics_discipline_discipline, aes(x = discipline_min, y = discipline_max, fill = N_edges)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma") +
+  facet_wrap(~ window, ncol=6) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    panel.grid = element_blank()
+  ) +
+  ggtitle("Number of Egdes between disciplines over Time")
+
+
+```
+
+
+```{r heatmap n_rel over time,  fig.height=16, fig.width=12}
+
+ggplot(all_metrics_discipline_discipline, aes(x = discipline_min, y = discipline_max, fill = N_edges_rel)) +
+  geom_tile(color = "white") +
+  scale_fill_viridis_c(option = "plasma") +
+  facet_wrap(~ window, ncol=6) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1),
+    panel.grid = element_blank()
+  ) +
+  ggtitle("Number of Egdes between disciplines over Time (on a relative basis)")
+ 
+
+```
+
+### 3.2.2 Time Series
+
+```{r edges over time, fig.height=14}
+ggplot(all_metrics_discipline_discipline, aes(x = window, y = N_edges, group = pair, color = pair)) +
+  geom_line() +
+  geom_point(size = 1) +
+  facet_wrap(~ str_wrap(pair, width = 20)) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank()) +
+  ggtitle("Number of Egdes between disciplines over Time")
+
+```
+
+\newpage
+
+```{r relative edges over time , fig.height=14}
+ggplot(all_metrics_discipline_discipline, aes(x = window, y = N_edges_rel, group = pair, color = pair)) +
+  geom_line() +
+  geom_point(size = 1) +
+  facet_wrap(~ str_wrap(pair, width = 20)) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank())  +
+  ggtitle("Number of Egdes between disciplines over Time (on a relative basis)")
+
+
+```
+
+# 4. Citation Flows
+
+## 4.1 Internal Coverage
+```{r internal coverage, results='asis'}
+
+internal_coverage <- data_ref |> 
+  group_by(discipline_from) |> 
+  summarise(N = n()) |> 
+  ungroup() |> 
+  mutate(N_total = sum(N), rel_coverage = round((N/N_total)*100,2)) |> 
+  select(discipline = discipline_from, "Total Number of References" = N, "Relative Number of References (in %)" = rel_coverage)
+
+kable(internal_coverage, "latex", booktabs = TRUE, linesep="", caption = "Number of References with Meta Data") |> 
+  kable_styling(latex_options = c("hold_position")) |> 
+  column_spec(1, width = "5cm")
+
+```
+
+
+## 4.2 Outside/Inside Citations
+
+### 4.2.1 Per Year
+
+```{r outside inside year}
+
+discipline_overview_long |>
+  filter(variable %in% c("cic", "coc")) |> 
+  ggplot(aes(x = publication_year, y = fraction, fill = variable)) +
+  geom_area(alpha = 0.8) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Fraction", x = "Year", title = "Outside/Inside Citation per Year") +
+  theme_minimal() +
+  facet_wrap(~discipline) + scale_fill_discrete(
+  name = "Metric",   # legend title
+  labels = c("cic" = "Citations Inside Category", 
+             "coc" = "Citations Oustide Category")
+) +
+  theme(legend.position = "bottom") 
+
+
+
+```
+
+\newpage
+
+```{r outside inside year cont}
+
+
+
+discipline_overview_long |>
+  filter(variable %in% c("outside_give", "inside_give")) |> 
+  ggplot(aes(x = publication_year, y = fraction, fill = variable)) +
+  geom_area(alpha = 0.8) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Fraction", x = "Year", title = "Outside/Inside Reference per Year") +
+  theme_minimal() +
+  facet_wrap(~discipline) + scale_fill_discrete(
+  name = "Metric",   # legend title
+  labels = c("inside_give" = "Reference Inside Category", 
+             "outside_give" = "Reference Oustide Category")
+) +
+  theme(legend.position = "bottom")
+
+```
+
+### 4.2.2 Per Window (non-overlapping)
+
+```{r outside inside window}
+discipline_overview_long_window |>
+  filter(variable %in% c("cic", "coc")) |> 
+  ggplot(aes(x = window_mid, y = fraction, fill = variable)) +
+  geom_area(alpha = 0.8) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Fraction", x = "Window", title = "Outside/Inside Citation per Window") +
+  theme_minimal() +
+  facet_wrap(~discipline) + scale_fill_discrete(
+  name = "Metric",   # legend title
+  labels = c("cic" = "Citations Inside Category", 
+             "coc" = "Citations Oustide Category")
+) +
+  theme(legend.position = "bottom")
+
+
+```
+
+\newpage
+
+```{r outside inside window cont}
+
+
+discipline_overview_long_window |>
+  filter(variable %in% c("outside_give", "inside_give")) |> 
+  ggplot(aes(x = window_mid, y = fraction, fill = variable)) +
+  geom_area(alpha = 0.8) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Fraction", x = "Window", title = "Outside/Inside Reference per Window") +
+  theme_minimal() +
+  facet_wrap(~discipline) + scale_fill_discrete(
+  name = "Metric",   # legend title
+  labels = c("inside_give" = "Reference Inside Category", 
+             "outside_give" = "Reference Oustide Category")
+) +
+  theme(legend.position = "bottom")
+```
+
+### 4.2.3 Per Window (Overlapping)
+
+```{r outside inside window overlapping}
+discipline_overview_moving_long |>
+  filter(variable %in% c("cic", "coc")) |> 
+  ggplot(aes(x = window_moving, y = fraction, fill = variable)) +
+  geom_area(aes(group = variable),alpha = 0.8) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Fraction", x = "Window") +
+  theme_minimal() +
+  facet_wrap(~discipline) + scale_fill_discrete(
+  name = "Metric",   # legend title
+  labels = c("cic" = "Citations Inside Category", 
+             "coc" = "Citations Oustide Category")
+) +
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("1980-1984", "2000-2004", "2020-2024"))
+
+
+
+```
+
+
+## 4.3 Citation Flows over Time
+
+
+```{r citation over time}
+
+ggplot(cit_link_filt, aes(x = publication_year, y = N_rel, color = discipline_from)) +
+  geom_line() +
+  facet_wrap(~ discipline_to) +
+  theme_minimal() +
+  scale_color_discrete(name = "discipline", guide = guide_legend(nrow=2))  +
+  theme(legend.position = "bottom") +
+  labs(y = "Fraction of Citations from another discipline", x = "Year", title = "Fraction of Citations from a discipline per Year")
+
+```
+
+\newpage
+
+```{r citation over time cont}
+  
+  
+ggplot(cit_link_filt_moving, aes(x = window_mid, y = N_rel, color = discipline_from)) +
+  geom_line() +
+  facet_wrap(~ discipline_to) +
+  theme_minimal()+
+  scale_color_discrete(name = "discipline", guide = guide_legend(nrow=2))  +
+  theme(legend.position = "bottom") +
+  labs(y = "Fraction of Citations from another discipline", x = "Year", title = "Fraction of Citations from a discipline per 5-year Rolling Windows")
+
+
+```
+
+
+## 4.4 Alluvial Graph of Flows
+
+```{r alluvial, fig.height=12, fig.width=16}
+
+cit_link_filt_window <- cit_link_moving |> 
+  filter(window_moving %in% c("1980-1984", "2000-2004", "2020-2024")) 
+  
+
+ggplot(cit_link_filt_window,
+       aes(axis1 = discipline_from, axis2 = discipline_to, y = N_rel)) +
+  geom_alluvium(aes(fill = discipline_from), width = 1/12, alpha = 0.8) +
+  geom_stratum(width = 1/4, fill = "grey80", color = "black") +
+  geom_text(stat = "stratum", 
+            aes(label = str_wrap(after_stat(stratum), width = 12))) +  
+  facet_wrap(~ window_moving, ncol = 3, scales = "free_y") +
+  labs(y = "Fraction of outgoing citations",
+       x = NULL) +
+  theme_minimal()+
+  theme(legend.position = "none")
+
+
+```
+
+\newpage
+
+## 4.5 Citation Flow Dispersion
+
+```{r citation disp}
+
+disp_overall <- cit_link_moving |> 
+  group_by(discipline_to) |> 
+  summarise(entropy = sum(-N_rel*log(N_rel)))
+
+kable(disp_overall, "latex", booktabs = T, linesep = "", col.names = c("discipline", "Flow Entropy"), caption = "Citation Flow Entropy across disciplines") |> 
+  kable_styling(latex_options = "hold_position")
+
+
+```
+
+\newpage
+
+```{r citation disp cont}
+
+
+disp_window <- cit_link_moving |> 
+  group_by(discipline_to, window_moving) |> 
+  summarise(entropy = sum(-N_rel*log(N_rel)))
+  
+
+
+disp_window |> 
+  ggplot(aes(window_moving, entropy)) +
+  geom_point() +
+  facet_wrap(~discipline_to) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(breaks = c("1980-1984", "2000-2004", "2020-2024")) +
+  labs(x = "Window", y = "Entropy", title = "discipline-level Entropy over Time")
+
+```
+
+
+
+
+\newpage
+
+# 5. Topical Analysis of disciplines
+
+```{r topic_overview}
+
+data_topics_final <- data_topics  |> 
+  select(-text, -embedding) |> 
+  filter(topic != -1) |> 
+  mutate(topic_keywords = str_replace_all(topic_keywords, "\\[", ""),
+         topic_keywords = str_replace_all(topic_keywords, "\\]", ""),
+         topic_keywords = str_replace_all(topic_keywords, "\\'", ""))
+
+
+topic_overview <-  data_topics_final |> 
+  group_by(discipline, topic, topic_keywords) |> 
+  summarise(N = n()) |> 
+  mutate(discipline = unfill_vec(discipline)) 
+
+kbl_obj <- kable(topic_overview, "latex", booktabs = TRUE, linesep="", caption = "Overview of Topics within disciplines.", longtable = T, 
+                 col.names = c("discipline", "Topic No.", "Keywords","No. Articles"), align = "lclc") |> 
+  kable_styling(latex_options = c("hold_position")) |> 
+  column_spec(1, width = "4cm", border_right = T) |> 
+  column_spec(2, width = "2cm", border_right = T) |> 
+  column_spec(3, width = "8cm", border_right = T) |> 
+  column_spec(4, width = "2cm")
+
+num_rows <- nrow(topic_overview)
+for (i in seq(9, num_rows, by = 9)) {
+  kbl_obj <- kbl_obj |> row_spec(i, extra_latex_after = "\\midrule")
+}
+
+kbl_obj
+
+```
+
+\newpage
+
+```{r topic_overview_cont, fig.height=12}
+
+data_topics_final |> 
+  filter(!discipline %in% disciplines_notof_interest) |> 
+  group_by(discipline, topic, topic_keywords) |> 
+  summarise(N = n()) |> 
+  group_by(discipline) |> 
+  mutate(N_rel = N / sum(N)) |> 
+  slice_max(order_by = N_rel, n = 3, with_ties = FALSE) |>
+  ungroup() |>
+  ggplot(aes(
+    x = reorder_within(topic_keywords, N_rel, discipline),
+    y = N_rel,
+    fill = topic_keywords
+  )) +
+  geom_col() +
+  labs(x = "") +
+  scale_x_reordered() +
+  facet_wrap(~ discipline, scales = "free_x")  +
+  labs(x = "") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.position = "bottom", legend.direction = "vertical",
+        legend.title = element_text(hjust = 0.5),
+    legend.key.width = unit(0.5, "cm"),            
+    legend.box = "vertical",                      
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.text = element_text(size = 7)) +
+    scale_fill_discrete("Keywords", guide = guide_legend(ncol = 2))
+
+```
+

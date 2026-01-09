@@ -37,7 +37,7 @@ unfill_vec <- function(x) {
 ## 1.1 Description of the Data Gathering Process
 
 The data considered in the project is from OpenAlex. We use a pair-based keyword search to identify articles which use or construct game-theoretical models. The keywords we are taken from two lists: 1. A list of JEL codes defining the subject of study, i.e. game theory. 2. A list of terms describing game setup which ensures that we only cover papers employing or constructing game-theortic models. For each pair of keywords, we identify articles based on the appearance of keyword pairs in the title or abstract of the paper (\color{red} maybe we also want to consider full texts? This would increase the number of articles drastically.\color{black}) Currently, we focus only on articles and reviews written in English (\color{red}Should we include books?\color{black}). We drop articles from the corpus without any reference information. As the number of articles is rather low prior to 1980, we choose this year as the starting point for our analysis. In this version ("v4"), we furthermore consider only articles which have journal information and whose journals are listed by the USNSF in order to assign disciplines to journals similar to Truc et al. (2023).
-s
+
 
 ## 1.2 Search Terms
 
@@ -70,9 +70,9 @@ fields_of_interest <- c("Computer Science", "Business, Management and Accounting
 
 
 author_field <- data_raw |> 
-    select(oa_id, title, field_1, subfield_1, discipline, authorships, cited_by_count) |> 
+    select(oa_id, publication_year, title, field_1, subfield_1, discipline, authorships, cited_by_count) |> 
     unnest(cols = c(authorships)) |> 
-    select(oa_id, title, display_name, cited_by_count, field_1, subfield_1, discipline) |> 
+    select(oa_id, title,publication_year, display_name, cited_by_count, field_1, subfield_1, discipline) |> 
     group_by(oa_id) |> 
     mutate(authors = paste(display_name, collapse = ";"), .groups = "drop") |> 
     ungroup() |> 
@@ -95,18 +95,23 @@ kable(data$description_table, booktabs=T, "latex", linesep="", caption = "Descri
 ## 1.4 Top Articles
 
 ```{r articles}
-top_articles <- data$top_articles 
-top_articles[13,1] <- NA
+
+top_articles <- author_field |> 
+    slice_max(n = 20, order_by = cited_by_count) |> 
+    select(authors,publication_year, title, cited_by_count, field_1, subfield_1, discipline)
+
 top_articles <- top_articles[1:15,]
 top_articles <- top_articles |> 
-  select(authors,title, publication_year, cited_by_count, field_1, subfield_1)
-colnames(top_articles) <- c("Authors","Title", "Year","Citations", "Field", "Subfield")
+  select(authors,title, publication_year, cited_by_count, field_1, subfield_1, discipline)
+colnames(top_articles) <- c("Authors","Title", "Year","Citations", "Field", "Subfield", "Discipline")
 kable(top_articles, booktabs=T, "latex", linesep="", caption = "Top Articles in Terms of Citations", longtable=T) |> 
   kable_styling(latex_options = c("center","HOLD_position"), font_size = 8) |> 
-  column_spec(1, width = "3cm") |> 
-  column_spec(2, width = "3cm") |> 
-  column_spec(5, width = "3cm")  |> 
-  column_spec(6, width = "3cm") 
+  column_spec(1, width = "2.75cm") |> 
+  column_spec(2, width = "2.75cm") |> 
+  column_spec(5, width = "2.75cm")  |> 
+  column_spec(6, width = "2.75cm") |> 
+  column_spec(7, width = "2.75cm") 
+
 ```
 
 ## 1.5 Number of Articles per Query
