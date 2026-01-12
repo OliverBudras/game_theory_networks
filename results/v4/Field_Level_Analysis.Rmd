@@ -22,6 +22,8 @@ library(ggalluvial)
 library(knitr)
 library(kableExtra)
 library(tidytext)
+library(cli)
+library(gridExtra)
 
 
 unfill_vec <- function(x) {
@@ -29,7 +31,16 @@ unfill_vec <- function(x) {
   ifelse(!is.na(same) & same, "", x)
 }
 
+
 ```
+
+# 0. Order of Code Execution
+
+To generate the data used in this script the following scripts have to be executed:
+
+"00_fetch_data_pairs.R" and "02_descriptives_and_cleaning.R" need to be executed to gather the OpenAlex data and clean it, respectively. This data is used to generate the temporal discipline-level networks based on bibliographic coupling in "03_generate_temporal_networks.R". In "04_network_layout_field_supernodes.R" serves the main purpose to generate data for the interactive visualization of the networks (accessible via ...) and the summarization of the main meta information from the networks showing the evolution of disciplines (stored in folder "Evolution Fields"). "07_field_field_data.R" needs to be executed to obtain the discipline pair data and the results in Section 3, i.e. the discipline-discipline relationships. To study citation flows, first "00_scrape_references_fields.R" has to be executed in order to obtain journal data for the references of the articles under consideration. Subsequently "00_join_reference_disciplines.R" is executed to map discipline information to the journals similar to the methodology by Truc et al. (2023). After further computations in this script, the results in Section 4 are produced based on this data. To obtain the results in Section 5 abstract embeddings are generated with "generate_embeddings_v4.py", which are then used as input to the BerTopic algorithm in "bertopic_simple_v4.py", which infers the main topics within each discipline. The results are stored in "topics" folder. Furthermore, to analyze the discipline-level topical data "13_prep_donut_chart_data_js.R" might be executed which aggregates the article-level topic data to a discipline level.
+
+\newpage
 
 
 ```{r data load and prep, cache=TRUE}
@@ -108,6 +119,18 @@ temporal_network_with_names <- readRDS("Temporal Networks/temporal_networks_with
 topic_files <- paste0("topics/", list.files("topics"))
 
 data_topics <- map_dfr(topic_files, readRDS)
+
+
+topic_data <- read_csv("sigma_network_field_supernodes/rolling_network/public/bertopic_topics.csv") |> 
+  filter(!discipline %in% disciplines_notof_interest) |> 
+  mutate(topic = as.character(topic)) |> 
+  mutate(topic_keywords_short = map_chr(str_split(topic_keywords, "\\s*,\\s*"),~ str_c(.x[1:3], collapse = ", "))) |> 
+  dplyr::mutate(window_factor = factor(window, levels = unique(window)))
+
+
+disciplines <- topic_data |> 
+  distinct(discipline) |> 
+  arrange(discipline)
 
 ```
 
@@ -359,6 +382,44 @@ facet_wrap(
 
   
   }
+}
+
+
+
+
+plot_topic <- function(disc, var){
+  
+  cli_inform("Producing Plot for discipline {disc}")
+
+  data_plot <- topic_data |> 
+    ungroup() |> 
+    filter(discipline == disc)
+  
+  
+  topic_plot <- ggplot(data_plot,
+         aes(x = window,
+             stratum = topic_keywords_short,
+             alluvium = topic_keywords_short,
+             y = {{var}},
+             fill = topic_keywords_short)) +
+    geom_flow(stat = "alluvium", lode.guidance = "forward", alpha = 0.8) +
+    geom_stratum(width = 1/12, color = "black") +
+    scale_fill_viridis_d(option = "plasma") +
+    theme_minimal() +
+    theme(
+      legend.title = element_blank(),
+      legend.position = "bottom",
+      legend.direction = "vertical",
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      plot.margin = margin(5.5, 80, 5.5, 5.5)  # extra right space for labels
+    ) +
+    labs(x = "Window", y = "discipline Share per Window") +
+    facet_wrap(~discipline) +
+    scale_x_discrete(breaks = c("1980-1984", "2000-2004", "2020-2024")) +
+    scale_fill_discrete("Keywords", guide = guide_legend(ncol = 2))
+  
+  return(topic_plot)
+  
 }
 
 
@@ -854,6 +915,8 @@ disp_window |>
 
 # 5. Topical Analysis of disciplines
 
+## 5.1 Topical Overview
+
 ```{r topic_overview}
 
 data_topics_final <- data_topics  |> 
@@ -917,6 +980,48 @@ data_topics_final |>
     legend.box.margin = margin(5, 5, 5, 5),
     legend.text = element_text(size = 7)) +
     scale_fill_discrete("Keywords", guide = guide_legend(ncol = 2))
+
+```
+
+## 5.2 Evolution of Topics over Time
+
+### 5.2.1 Based on N
+
+
+```{r topical evolution N, message=FALSE, warning=FALSE, echo=FALSE}
+
+
+plots_N <- map(disciplines$discipline, ~plot_topic(., var=N))
+plots_N_rel <- map(disciplines$discipline, ~plot_topic(., var=N_rel))
+
+
+
+grid.arrange(plots_N[[1]], plots_N[[2]])
+print("<P style='page-break-before: always'>") 
+grid.arrange(plots_N[[3]], plots_N[[4]])
+grid.arrange(plots_N[[5]], plots_N[[6]])
+grid.arrange(plots_N[[7]], plots_N[[8]])
+grid.arrange(plots_N[[9]], plots_N[[10]])
+grid.arrange(plots_N[[11]], plots_N[[12]])
+plots_N[[13]]
+
+
+
+```
+
+### 5.2.2 Based on $N^{rel}$
+
+```{r topical evolution N_rel, results='asis', message=FALSE, warning=FALSE, echo=FALSE}
+
+
+grid.arrange(plots_N_rel[[1]], plots_N_rel[[2]])
+print("<P style='page-break-before: always'>") 
+grid.arrange(plots_N_rel[[3]], plots_N_rel[[4]])
+grid.arrange(plots_N_rel[[5]], plots_N_rel[[6]])
+grid.arrange(plots_N_rel[[7]], plots_N_rel[[8]])
+grid.arrange(plots_N_rel[[9]], plots_N_rel[[10]])
+grid.arrange(plots_N_rel[[11]], plots_N_rel[[12]])
+plots_N_rel[[13]]
 
 ```
 
